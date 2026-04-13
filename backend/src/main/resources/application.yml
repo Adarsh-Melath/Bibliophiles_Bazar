@@ -24,4 +24,4 @@ app:
     frontend-url: http://localhost:5173
 
 server:
-    port: 8080
+    port: 2007
