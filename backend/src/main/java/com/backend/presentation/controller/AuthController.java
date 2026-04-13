@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.application.dto.AuthResponse;
+import com.backend.application.dto.LoginRequest;
 import com.backend.application.dto.RegisterRequest;
 import com.backend.application.dto.VerifyOTPRequest;
 import com.backend.application.service.AuthService;
@@ -40,5 +41,10 @@ public class AuthController {
     public ResponseEntity<String> resendOtp(@RequestBody Map<String, String> body) {
         authService.sendOtp(body.get("email"));
         return ResponseEntity.status(HttpStatus.OK).body("OTP resent successfully.");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(authService.login(request));
     }
 }

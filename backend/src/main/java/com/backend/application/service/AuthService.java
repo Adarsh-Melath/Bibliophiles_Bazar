@@ -3,10 +3,12 @@ package com.backend.application.service;
 import java.time.LocalDateTime;
 import java.util.Random;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.application.dto.AuthResponse;
+import com.backend.application.dto.LoginRequest;
 import com.backend.application.dto.RegisterRequest;
 import com.backend.application.dto.UserDto;
 import com.backend.application.dto.VerifyOTPRequest;
@@ -18,7 +20,6 @@ import com.backend.domain.repository.OTPTokenRepository;
 import com.backend.domain.repository.UserRepository;
 import com.backend.infrastructure.email.EmailService;
 import com.backend.infrastructure.security.JWTUtil;
-import com.nimbusds.openid.connect.sdk.federation.utils.JWTUtils;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class AuthService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
         user.setProvider(AuthProvider.LOCAL);
         user.setEnabled(false);
@@ -90,5 +91,23 @@ public class AuthService {
     private UserDto toDto(User user) {
         return new UserDto(user.getId(), user.getName(), user.getEmail(), user.getRole().name(),
                 user.getProfileImage());
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isEnabled())
+            throw new RuntimeException("Please verify your email first ");
+
+        if (user.isBlocked())
+            throw new RuntimeException("Your account has been blocked");
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
+            throw new RuntimeException("Invalid Credentials");
+
+        String token = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().name());
+
+        return new AuthResponse((token), toDto(user));
     }
 }
