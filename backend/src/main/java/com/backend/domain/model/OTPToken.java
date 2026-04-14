@@ -30,8 +30,9 @@ public class OTPToken {
 
     private boolean used = false;
 
+    private String resetToken;
+
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiresAt);
     }
-
 }

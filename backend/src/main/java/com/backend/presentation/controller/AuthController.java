@@ -2,10 +2,8 @@ package com.backend.presentation.controller;
 
 import java.util.Map;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.application.dto.AuthResponse;
 import com.backend.application.dto.LoginRequest;
 import com.backend.application.dto.RegisterRequest;
+import com.backend.application.dto.ResetPasswordRequest;
 import com.backend.application.dto.VerifyOTPRequest;
 import com.backend.application.service.AuthService;
 
@@ -85,4 +84,23 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.ok("Logged out successfully");
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> body) {
+        authService.forgotPassword(body.get("email"));
+        return ResponseEntity.ok("OTP sent to your email");
+    }
+
+    @PostMapping("/verify-reset-otp")
+    public ResponseEntity<Map<String, String>> verifyResetOtp(@RequestBody Map<String, String> body) {
+        String resetToken = authService.verifyResetOtp(body.get("email"), body.get("code"));
+        return ResponseEntity.ok(Map.of("resetToken", resetToken));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok("Password reset successfully");
+    }
+
 }

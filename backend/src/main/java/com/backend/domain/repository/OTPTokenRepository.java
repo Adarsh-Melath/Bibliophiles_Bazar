@@ -9,6 +9,7 @@ public interface OTPTokenRepository {
 
     Optional<OTPToken> findLatestByEmail(String email);
 
-    
+    Optional<OTPToken> findByResetToken(String resetToken);
+
     void deleteByEmail(String email);
 }

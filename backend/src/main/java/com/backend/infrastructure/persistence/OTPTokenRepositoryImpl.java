@@ -26,6 +26,11 @@ public class OTPTokenRepositoryImpl implements OTPTokenRepository {
     }
 
     @Override
+    public Optional<OTPToken> findByResetToken(String email) {
+        return jpaOTPTokenRepository.findByResetToken(email);
+    }
+
+    @Override
     public void deleteByEmail(String email) {
         jpaOTPTokenRepository.deleteByEmail(email);
     }

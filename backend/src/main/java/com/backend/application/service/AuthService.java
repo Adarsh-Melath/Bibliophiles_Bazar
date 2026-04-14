@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.backend.application.dto.AuthResponse;
 import com.backend.application.dto.LoginRequest;
 import com.backend.application.dto.RegisterRequest;
+import com.backend.application.dto.ResetPasswordRequest;
 import com.backend.application.dto.UserDto;
 import com.backend.application.dto.VerifyOTPRequest;
 import com.backend.domain.model.AuthProvider;
@@ -116,7 +118,7 @@ public class AuthService {
         return new AuthResponse(accessToken, refreshToken, toDto(user));
     }
 
-    public String generateRefreshToken(String email) {
+    private String generateRefreshToken(String email) {
         refreshTokenRepository.deleteByEmail(email);
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(UUID.randomUUID().toString());
@@ -142,4 +144,49 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
         refreshTokenRepository.deleteByEmail(token.getEmail());
     }
+
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!user.isEnabled())
+            throw new RuntimeException("Please complete registration first");
+
+        if (user.isBlocked())
+            throw new RuntimeException("Your account has been suspended. Contact support.");
+
+        sendOtp(email);
+    }
+
+    public String verifyResetOtp(String email, String code) {
+        OTPToken otp = otpTokenRepository.findLatestByEmail(email)
+                .orElseThrow(() -> new RuntimeException("OTP not found"));
+
+        if (otp.isExpired())
+            throw new RuntimeException("OTP expired");
+        if (!otp.getCode().equals(code)) {
+            throw new RuntimeException("Invalid OTP");
+        }
+
+        String resetToken = UUID.randomUUID().toString();
+
+        otp.setResetToken(resetToken);
+        otpTokenRepository.save(otp);
+        return resetToken;
+    }
+
+    public void resetPassword(ResetPasswordRequest request) {
+        OTPToken otp = otpTokenRepository.findByResetToken(request.getResetToken())
+                .orElseThrow(() -> new RuntimeException("Invalid reset token"));
+        if (otp.isExpired())
+            throw new RuntimeException("OTP expired");
+        User user = userRepository.findByEmail(otp.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
+        
+        otpTokenRepository.deleteByEmail(otp.getEmail());
+    }
 }
+
+
