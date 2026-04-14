@@ -37,3 +37,10 @@ body {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes riseUp {
+  0%   { transform: translateY(0) scaleY(0); opacity: 0; transform-origin: bottom; }
+  20%  { opacity: 1; }
+  80%  { opacity: 0.4; }
+  100% { transform: translateY(-120px) scaleY(1); opacity: 0; }
+}
