@@ -2,6 +2,7 @@ package com.backend.application.service;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,9 +15,11 @@ import com.backend.application.dto.UserDto;
 import com.backend.application.dto.VerifyOTPRequest;
 import com.backend.domain.model.AuthProvider;
 import com.backend.domain.model.OTPToken;
+import com.backend.domain.model.RefreshToken;
 import com.backend.domain.model.Role;
 import com.backend.domain.model.User;
 import com.backend.domain.repository.OTPTokenRepository;
+import com.backend.domain.repository.RefreshTokenRepository;
 import com.backend.domain.repository.UserRepository;
 import com.backend.infrastructure.email.EmailService;
 import com.backend.infrastructure.security.JWTUtil;
@@ -30,6 +33,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final OTPTokenRepository otpTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
@@ -83,9 +87,9 @@ public class AuthService {
         userRepository.save(user);
         otpTokenRepository.deleteByEmail(request.getEmail());
 
-        String token = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().name());
-
-        return new AuthResponse((token), toDto(user));
+        String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().name());
+        String refreshToken = generateRefreshToken(user.getEmail());
+        return new AuthResponse(accessToken, refreshToken, toDto(user));
     }
 
     private UserDto toDto(User user) {
@@ -106,8 +110,36 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             throw new RuntimeException("Invalid Credentials");
 
-        String token = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().name());
+        String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().name());
 
-        return new AuthResponse((token), toDto(user));
+        String refreshToken = generateRefreshToken(user.getEmail());
+        return new AuthResponse(accessToken, refreshToken, toDto(user));
+    }
+
+    public String generateRefreshToken(String email) {
+        refreshTokenRepository.deleteByEmail(email);
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setEmail(email);
+        refreshToken.setExpiresAt(LocalDateTime.now().plusDays(7));
+        return refreshTokenRepository.save(refreshToken).getToken();
+    }
+
+    public String refresh(String refreshToken) {
+        RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("Invali refresh token"));
+
+        if (token.isExpired())
+            throw new RuntimeException("Refresh token expired");
+
+        return jwtUtil.generateAccessToken(token.getEmail(), userRepository.findByEmail(token.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found ")).getRole().name());
+    }
+
+    @Transactional
+    public void logout(String refreshToken) {
+        RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+        refreshTokenRepository.deleteByEmail(token.getEmail());
     }
 }

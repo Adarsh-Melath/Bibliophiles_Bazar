@@ -2,9 +2,13 @@ package com.backend.presentation.controller;
 
 import java.util.Map;
 
+import org.apache.catalina.connector.Response;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +20,7 @@ import com.backend.application.dto.RegisterRequest;
 import com.backend.application.dto.VerifyOTPRequest;
 import com.backend.application.service.AuthService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +49,40 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.login(request));
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request, HttpServletResponse response) {
+
+        AuthResponse authResponse = authService.login(request);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", authResponse.getRefreshToken()).httpOnly(true)
+                .path("/api/auth/refresh")
+                .maxAge(7 * 24 * 60 * 60).sameSite("Strict")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        authResponse.setRefreshToken(null);
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refresh(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        if (refreshToken == null)
+            return ResponseEntity.status(401).build();
+
+        String newAccessToken = authService.refresh(refreshToken);
+        return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken,
+            HttpServletResponse response) {
+        if (refreshToken != null)
+            authService.logout(refreshToken);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .path("/api/auth/refresh")
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok("Logged out successfully");
     }
 }
