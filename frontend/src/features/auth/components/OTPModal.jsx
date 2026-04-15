@@ -61,8 +61,10 @@ export default function OtpModal({ email, onVerified, onClose }) {
                 <div className="p-8">
 
                     {/* Close */}
-                    <button onClick={onClose}
-                        className="absolute top-5 right-5 text-[#D7CCC8] hover:text-[#548C8C] transition-colors">
+                    <button
+                        onClick={onClose}
+                        disabled={isPending}
+                        className="absolute top-5 right-5 text-[#D7CCC8] hover:text-[#548C8C] transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                         <X size={20} />
                     </button>
 

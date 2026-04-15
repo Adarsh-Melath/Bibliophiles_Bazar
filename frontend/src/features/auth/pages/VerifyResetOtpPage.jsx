@@ -57,7 +57,7 @@ export default function VerifyResetOtpPage() {
   const { mutate: resendOtp, isPending: isResendingOtp, error: resendError } = useMutation({
     mutationFn: () => api.post('/auth/forgot-password', { email }),
     onSuccess: () => {
-      setTimeLeft(300)
+      setTimeLeft(60)
       setOtp(['', '', '', '', '', ''])
       setIsResending(false)
       inputRefs.current[0]?.focus()

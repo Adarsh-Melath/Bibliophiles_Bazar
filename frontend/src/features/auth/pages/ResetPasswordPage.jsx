@@ -32,6 +32,10 @@ export default function ResetPasswordPage() {
     resolver: zodResolver(resetPasswordSchema),
   })
 
+  const password = watch('password')
+  const confirmPassword = watch('confirmPassword')
+  const passwordStrength = getPasswordStrength(password)
+  
   // Reset password mutation
   const { mutate: resetPassword, isPending, error } = useMutation({
     mutationFn: (data) => {

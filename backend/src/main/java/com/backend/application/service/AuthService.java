@@ -1,7 +1,7 @@
 package com.backend.application.service;
 
 import java.time.LocalDateTime;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -42,7 +42,7 @@ public class AuthService {
 
     public void register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already in use");
+            throw new RuntimeException("If this email is not registered, you'll receive a verification code");
         }
 
         User user = new User();
@@ -59,7 +59,7 @@ public class AuthService {
 
     @Transactional
     public void sendOtp(String email) {
-        String code = String.format("%06d", new Random().nextInt(999999));
+       String code = String.format("%06d", new SecureRandom().nextInt(1000000));
 
         OTPToken otp = new OTPToken();
         otp.setEmail(email);
@@ -101,7 +101,7 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Invalid email or password."));
 
         if (!user.isEnabled())
             throw new RuntimeException("Please verify your email first ");
@@ -129,7 +129,7 @@ public class AuthService {
 
     public String refresh(String refreshToken) {
         RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("Invali refresh token"));
+                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
 
         if (token.isExpired())
             throw new RuntimeException("Refresh token expired");
@@ -147,7 +147,7 @@ public class AuthService {
 
     public void forgotPassword(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("If this email is registered, you'll receive a reset code."));
         if (!user.isEnabled())
             throw new RuntimeException("Please complete registration first");
 

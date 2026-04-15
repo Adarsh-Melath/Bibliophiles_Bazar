@@ -43,6 +43,10 @@ public class AuthController {
 
     @PostMapping("/resend-otp")
     public ResponseEntity<String> resendOtp(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        if(email==null || email.isBlank()){
+            return ResponseEntity.badRequest().body("Email is required");
+        }
         authService.sendOtp(body.get("email"));
         return ResponseEntity.status(HttpStatus.OK).body("OTP resent successfully.");
     }

@@ -1,7 +1,16 @@
 import { create } from 'zustand';
-export const useAuthStore = create((set) => ({
-    accessToken: null,
-    user: null,
-    setAuth: (token, user) => set({ accessToken: token, user }),
-    clearAuth: () => set({ accessToken: null, user: null }),
-}));
+import { persist } from 'zustand/middleware'
+
+export const useAuthStore = create(
+    persist(
+        (set) => ({
+            accessToken: null,
+            user: null,
+            setAuth: (token, user) => set({ accessToken: token, user }),
+            clearAuth: () => set({ accessToken: null, user: null }),
+        }), {
+            name: 'auth-storage',
+            partialState:(state)=>({user:state.user})
+        }
+    )
+)
