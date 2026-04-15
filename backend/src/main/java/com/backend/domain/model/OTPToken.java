@@ -28,8 +28,6 @@ public class OTPToken {
     @Column(nullable = false)
     private LocalDateTime expiresAt;
 
-    private boolean used = false;
-
     private String resetToken;
 
     public boolean isExpired() {

@@ -5,8 +5,8 @@ spring:
         password: ${DB_PASSWORD}
     jpa:
         hibernate:
-            ddl-auto: update
-        show-sql: true
+            ddl-auto: validate
+        show-sql: false
     mail:
         host: smtp.gmail.com
         port: 587
@@ -21,7 +21,7 @@ app:
         secret: ${JWT_SECRET}
         expiration: 900000 # 15 minutes
         refresh-expiration: 604800000 # 7 days
-    frontend-url: http://localhost:5173
+    frontend-url: http://localhost:5174
 
 server:
     port: 2007
