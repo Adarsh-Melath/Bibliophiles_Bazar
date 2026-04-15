@@ -153,7 +153,10 @@ export default function LoginPage() {
           {/* Error */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl mb-4">
-              {error.response?.data?.error || 'Something went wrong'}
+              <p className="font-semibold mb-1">Login failed</p>
+              <p>
+                {error.response?.data?.error || error.message || 'Something went wrong'}
+              </p>
             </div>
           )}
 

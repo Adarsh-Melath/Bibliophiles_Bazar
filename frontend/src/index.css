@@ -44,3 +44,8 @@ body {
   80%  { opacity: 0.4; }
   100% { transform: translateY(-120px) scaleY(1); opacity: 0; }
 }
+
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(52px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(52px) rotate(-360deg); }
+}
