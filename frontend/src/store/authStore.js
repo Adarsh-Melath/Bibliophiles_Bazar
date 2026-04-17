@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware'
+import { persist } from 'zustand/middleware';
 
 export const useAuthStore = create(
     persist(
@@ -8,9 +8,10 @@ export const useAuthStore = create(
             user: null,
             setAuth: (token, user) => set({ accessToken: token, user }),
             clearAuth: () => set({ accessToken: null, user: null }),
-        }), {
+        }),
+        {
             name: 'auth-storage',
-            partialState:(state)=>({user:state.user})
-        }
-    )
-)
+            partialize: (state) => ({ user: state.user }),
+        },
+    ),
+);
