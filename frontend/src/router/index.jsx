@@ -19,6 +19,10 @@ import OAuthCallbackPage from '../features/auth/pages/OAuth2CallbackPage'
 import AdminForgotPasswordPage from '../features/admin/pages/AdminForgotPasswordPage'
 import AdminVerifyResetOtpPage from '../features/admin/pages/AdminVerifyResetOtpPage'
 import AdminResetPasswordPage from '../features/admin/pages/AdminResetPasswordPage'
+import VendorApplyPage from '../features/vendor/pages/VendorApplyPage'
+import VendorLayout from '../features/vendor/layouts/VendorLayout'
+import VendorDashboardPage from '../features/vendor/pages/VendorDashboardPage'
+import VendorRoute from './VendorRoute'
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +43,18 @@ export const router = createBrowserRouter([
       { path: '/admin/forgot-password', element: <AdminForgotPasswordPage /> },
       { path: '/admin/verify-reset-otp', element: <AdminVerifyResetOtpPage /> },
       { path: '/admin/reset-password', element: <AdminResetPasswordPage /> },
+      { path: '/vendor/apply', element: <VendorApplyPage /> },
+      {
+        path: '/vendor',
+        element: <VendorRoute><VendorLayout /></VendorRoute>,
+        children: [
+          { path: 'dashboard', element: <VendorDashboardPage /> },
+        ]
+      },
+      // {
+      //   path: '/vendor/dashboard',
+      //   element: <VendorDashboardPage />
+      // },
       { path: '/admin/dashboard', element: <AdminRoute><AdminDashboardPage /></AdminRoute> },
       { path: '/admin/users', element: <AdminRoute><AdminUsersPage /></AdminRoute> },
     ]

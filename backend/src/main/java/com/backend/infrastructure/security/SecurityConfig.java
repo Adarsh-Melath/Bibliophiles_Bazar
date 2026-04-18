@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/api/auth/**", "/oauth2/**",
-                                "/login/oauth2/**").permitAll().anyRequest().authenticated())
+                                "/login/oauth2/**", "/api/vendor/apply").permitAll().anyRequest().authenticated())
                 .httpBasic(basic -> basic.disable())
                 .formLogin(form -> form.disable())
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2SuccessHandler))

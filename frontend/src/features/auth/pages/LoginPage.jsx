@@ -21,7 +21,14 @@ export default function LoginPage() {
     mutationFn: (data) => api.post('/auth/login', data),
     onSuccess: (res) => {
       setAuth(res.data.accessToken, res.data.user)
-      navigate('/')
+      const role = res.data.user.role
+      if (role === 'ADMIN') {
+        navigate('/admin/dashboard')
+      } else if (role === 'VENDOR') {
+        navigate('/vendor/dashboard')
+      } else {
+        navigate('/')
+      }
     },
   })
 
