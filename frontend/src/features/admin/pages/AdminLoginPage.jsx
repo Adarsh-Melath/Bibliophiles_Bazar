@@ -28,7 +28,7 @@ function AdminLoginPage() {
                 return
             }
             setAuth(res.data.accessToken, user)
-            navigate('/admin/users')
+            navigate('/admin/dashboard')
         },
     })
 
@@ -140,7 +140,7 @@ function AdminLoginPage() {
 
                     {/* Forgot Password Link */}
                     <div className="text-center mt-6">
-                        <button
+                        <button onClick={() => navigate('/admin/forgot-password')}
                             type="button"
                             className="text-xs text-[#9CAF88] hover:text-[#548C8C] font-medium transition-colors"
                         >

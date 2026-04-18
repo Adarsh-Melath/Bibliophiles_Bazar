@@ -57,7 +57,7 @@ public class AuthController {
         AuthResponse authResponse = authService.login(request);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", authResponse.getRefreshToken()).httpOnly(true)
                 .path("/api/auth/refresh")
-                .maxAge(7 * 24 * 60 * 60).sameSite("Strict")
+                .maxAge(7 * 24 * 60 * 60).sameSite("Lax")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -84,6 +84,7 @@ public class AuthController {
                 .httpOnly(true)
                 .path("/api/auth/refresh")
                 .maxAge(0)
+                .sameSite("Lax")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.ok("Logged out successfully");
