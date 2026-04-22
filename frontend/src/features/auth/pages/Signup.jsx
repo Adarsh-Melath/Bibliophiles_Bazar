@@ -6,6 +6,7 @@ import { Eye, EyeOff, BookOpen } from 'lucide-react'
 import { signupSchema } from '../schemas/authSchemas'
 import { useSignup } from '../hooks/useSignup'
 import OtpModal from '../components/OTPModal'
+import { BACKEND_URL } from '../../../lib/config'
 import { motion } from 'framer-motion'
 
 export default function Signup() {
@@ -158,7 +159,7 @@ export default function Signup() {
 
                     {/* Premium OAuth Button */}
                     <motion.a
-                        href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`}
+                        href={`${BACKEND_URL}/oauth2/authorization/google`}
 
                         whileHover={{ y: -2, shadow: '0 10px 25px -5px rgba(44, 30, 17, 0.1)' }}
                         whileTap={{ scale: 0.98 }}
