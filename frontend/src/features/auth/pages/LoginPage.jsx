@@ -139,7 +139,8 @@ export default function LoginPage() {
 
           {/* Premium OAuth Button */}
           <motion.a
-            href="http://localhost:2007/oauth2/authorization/google"
+            href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`}
+
             whileHover={{ y: -2, shadow: '0 10px 25px -5px rgba(44, 30, 17, 0.1)' }}
             whileTap={{ scale: 0.98 }}
             className="w-full py-4 bg-white border border-shelf/15 rounded-sm flex items-center justify-center gap-4 group transition-all duration-300 shadow-soft"
