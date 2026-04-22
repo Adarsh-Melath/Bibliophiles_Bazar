@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, BookOpen } from 'lucide-react'
 import { signupSchema } from '../schemas/authSchemas'
 import { useSignup } from '../hooks/useSignup'
-import OtpModal from '../components/OtpModal'
+import OtpModal from '../components/OTPModal'
 import { motion } from 'framer-motion'
 
 export default function Signup() {

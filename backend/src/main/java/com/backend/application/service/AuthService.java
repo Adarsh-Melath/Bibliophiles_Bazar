@@ -94,7 +94,7 @@ public class AuthService {
 
     private UserDto toDto(User user) {
         return new UserDto(user.getId(), user.getName(), user.getEmail(), user.getRole().name(),
-                user.getProfileImage());
+                user.getProfileImage(),user.getPhone());
     }
 
     public AuthResponse login(LoginRequest request) {

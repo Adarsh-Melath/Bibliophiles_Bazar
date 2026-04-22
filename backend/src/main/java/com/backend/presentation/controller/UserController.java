@@ -1,6 +1,7 @@
 package com.backend.presentation.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.application.dto.AddressRequest;
 import com.backend.application.dto.AddressResponse;
@@ -38,6 +41,16 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<UserDto> getProfiler(@AuthenticationPrincipal String email) {
         return ResponseEntity.ok(userService.getProfile(email));
+    }
+
+    @PostMapping("/profile/image")
+    public ResponseEntity<Map<String,String>> uploadProfileImage(
+        @AuthenticationPrincipal String email,
+        @RequestParam("file") MultipartFile file
+
+    ) {
+        String url   = userService.uploadProfileImage(email, file);
+        return ResponseEntity.ok(Map.of("url", url));
     }
 
     @PutMapping("/profile")

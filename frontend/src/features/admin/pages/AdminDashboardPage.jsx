@@ -1,6 +1,6 @@
 import { Bell, Search, TrendingUp, TrendingDown, Users, BookOpen, DollarSign, Library, ShoppingCart, Globe } from 'lucide-react'
 import { useAuthStore } from '../../../store/authStore'
-import AdminSidebar from '../components/AdminSidebar'
+import AdminSidebar from '../components/AdminSideBar'
 import {
     AreaChart, Area, BarChart, Bar,
     XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid

@@ -1,7 +1,6 @@
 package com.backend.application.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
@@ -17,9 +16,7 @@ import com.backend.domain.model.User;
 import com.backend.domain.repository.BookRepository;
 import com.backend.domain.repository.UserRepository;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
