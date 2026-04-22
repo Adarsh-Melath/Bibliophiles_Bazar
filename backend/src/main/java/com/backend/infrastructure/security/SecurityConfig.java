@@ -50,6 +50,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:5174",
+                "https://bibliophilesbazar.vercel.app",
                 "https://frontend-5xfl3axqm-adarshmelath1305-5215s-projects.vercel.app",
                 "https://frontend-xi-one-93.vercel.app"));
 

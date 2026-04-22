@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.http.ResponseCookie;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -26,6 +27,9 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+
+  @Value("${app.jwt.frontend-url}")
+  private String frontendUrl;
 
   private final UserRepository userRepository;
   private final RefreshTokenRepository refreshTokenRepository;
@@ -65,10 +69,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().name());
 
     // Redirect to frontend with tokens
-    String frontendUrl = "https://frontend-xi-one-93.vercel.app/oauth2/callback"
+    String redirectUrl = frontendUrl + "/oauth2/callback"
         + "?token=" + accessToken;
 
-    response.sendRedirect(frontendUrl);
+    response.sendRedirect(redirectUrl);
   }
 
   public String generateRefreshToken(String email) {
