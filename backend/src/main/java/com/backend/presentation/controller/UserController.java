@@ -2,6 +2,8 @@ package com.backend.presentation.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/user")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     private final UserService userService;
 
     @GetMapping("/profile")
@@ -39,6 +43,7 @@ public class UserController {
     @PutMapping("/profile")
     public ResponseEntity<UserDto> updateProfile(@AuthenticationPrincipal String email,
             @RequestBody @Valid UpdateProfileRequest request) {
+        logger.debug("Update profile called for email: {}", email);
         return ResponseEntity.ok(userService.updateProfile(email, request));
     }
 
@@ -63,6 +68,7 @@ public class UserController {
     @PutMapping("/addresses/{id}")
     public ResponseEntity<AddressResponse> updateAddress(@AuthenticationPrincipal String email, @PathVariable Long id,
             @RequestBody @Valid AddressRequest request) {
+        logger.debug("Update address controller called for email: {}, id: {}", email, id);
         return ResponseEntity.ok(userService.updateAddress(email, id, request));
     }
 

@@ -1,116 +1,121 @@
-import { Eye, Package } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ChevronRight, Archive, Truck, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-export default function RecentOrders({ orders = [] }) {
-    const getStatusColor = (status) => {
-        switch (status?.toLowerCase()) {
-            case 'delivered':
-                return 'bg-green-100 text-green-700'
-            case 'shipped':
-                return 'bg-blue-100 text-blue-700'
-            case 'processing':
-                return 'bg-yellow-100 text-yellow-700'
-            case 'cancelled':
-                return 'bg-red-100 text-red-700'
-            default:
-                return 'bg-gray-100 text-gray-700'
-        }
-    }
+const mockOrders = [
+  {
+    id: 'OB-2026-X8',
+    title: 'The Great Gatsby (Collector\'s Edition)',
+    date: 'Apr 12, 2026',
+    status: 'Shipped',
+    icon: Truck,
+    price: 3250
+  },
+  {
+    id: 'OB-2026-M4',
+    title: 'Design Patterns: Elements of Reusable Object-Oriented Software',
+    date: 'Mar 28, 2026',
+    status: 'Delivered',
+    icon: CheckCircle,
+    price: 1899
+  },
+  {
+    id: 'OB-2026-K1',
+    title: 'The Silmarillion',
+    date: 'Feb 15, 2026',
+    status: 'Archived',
+    icon: Archive,
+    price: 950
+  }
+];
 
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        })
-    }
+export default function RecentOrders() {
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(price);
+  };
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR'
-        }).format(price)
-    }
-
-    if (orders.length === 0) {
-        return (
-            <div className="bg-white rounded-2xl p-8 text-center border border-accent/40">
-                <Package className="w-12 h-12 text-heading-muted mx-auto mb-4" />
-                <h3 className="font-heading text-lg font-semibold text-heading mb-2">
-                    No orders yet
-                </h3>
-                <p className="font-body text-sm text-heading-muted mb-4">
-                    Your recent orders will appear here once you make a purchase.
-                </p>
-                <Link
-                    to="/books"
-                    className="inline-flex items-center gap-2 bg-primary text-white
-                               px-6 py-2 rounded-full font-body text-sm font-medium
-                               hover:bg-primary/90 transition-colors">
-                    Browse Books
-                </Link>
-            </div>
-        )
-    }
-
-    return (
-        <div className="bg-white rounded-2xl p-6 border border-accent/40">
-            <div className="flex items-center justify-between mb-6">
-                <h3 className="font-heading text-lg font-semibold text-heading">
-                    Recent Orders
-                </h3>
-                <Link
-                    to="/orders"
-                    className="font-body text-sm text-primary hover:text-primary/80
-                               font-medium transition-colors">
-                    View All
-                </Link>
-            </div>
-
-            <div className="space-y-4">
-                {orders.slice(0, 3).map((order) => (
-                    <div key={order.id} className="border border-accent/40 rounded-xl p-4
-                                                  hover:border-primary/40 transition-colors">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                                    <Package className="w-5 h-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="font-body text-sm font-medium text-heading">
-                                        Order #{order.id}
-                                    </p>
-                                    <p className="font-body text-xs text-heading-muted">
-                                        {formatDate(order.createdAt)}
-                                    </p>
-                                </div>
-                            </div>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium
-                                             ${getStatusColor(order.status)}`}>
-                                {order.status}
-                            </span>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <div className="font-body text-sm text-heading-muted">
-                                {order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <span className="font-heading text-base font-semibold text-heading">
-                                    {formatPrice(order.totalAmount)}
-                                </span>
-                                <Link
-                                    to={`/orders/${order.id}`}
-                                    className="flex items-center gap-1.5 text-sm font-body
-                                               text-primary hover:text-primary/80 transition-colors">
-                                    <Eye size={14} />
-                                    View
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.4 }}
+      className="library-panel p-8 mb-10"
+    >
+      <div className="flex items-center justify-between mb-8 border-b border-shelf/5 pb-6">
+        <div>
+          <h2 className="font-heading font-bold text-2xl text-shelf">
+            Acquisition History
+          </h2>
+          <p className="font-body text-xs text-shelf/40 mt-1 uppercase tracking-widest font-bold">
+            Recent physical & digital additions
+          </p>
         </div>
-    )
+        <Link 
+          to="/orders" 
+          className="text-burgundy hover:text-shelf font-ui text-[11px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 group p-2 border border-transparent hover:border-shelf/10 rounded"
+        >
+          View Ledger{' '}
+          <ChevronRight
+            size={14}
+            className="group-hover:translate-x-1 transition-transform"
+          />
+        </Link>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {mockOrders.map((order, index) => {
+          const StatusIcon = order.icon;
+          return (
+            <motion.div
+              key={order.id}
+              whileHover={{ x: 4 }}
+              className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded border border-shelf/5 hover:border-burgundy/20 hover:bg-paper/50 transition-all gap-4"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded bg-shelf/5 flex items-center justify-center text-shelf/60 mt-1">
+                   <StatusIcon size={18} />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-shelf group-hover:text-burgundy">
+                    {order.title}
+                  </h3>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="font-ui text-[10px] text-shelf/40 uppercase font-bold tabular-nums">
+                      {order.id}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-shelf/20"></span>
+                    <p className="font-body text-xs text-shelf/60 italic font-medium">
+                      Acquired on {order.date}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between md:justify-end gap-10 md:w-1/3">
+                <span
+                  className={`px-3 py-1 rounded text-[10px] font-ui font-bold uppercase tracking-widest ${
+                    order.status === 'Delivered' 
+                      ? 'bg-green-100 text-green-800' 
+                      : order.status === 'Archived'
+                      ? 'bg-shelf/10 text-shelf/60'
+                      : 'bg-burgundy/10 text-burgundy'
+                  }`}
+                >
+                  {order.status}
+                </span>
+                <span className="font-heading font-bold text-xl text-shelf">
+                  {formatPrice(order.price)}
+                </span>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
 }

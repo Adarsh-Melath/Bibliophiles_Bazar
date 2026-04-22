@@ -1,8 +1,10 @@
-import { User, Package, Heart, MapPin, Shield, Settings } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { User, Package, Heart, MapPin, Shield, Check, ChevronDown } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Card } from '../../../components/ui'
 
 const menuItems = [
-    { id: 'personal', label: 'Personal Info', icon: User, path: '/profile' },
+    { id: 'overview', label: 'Dashboard', icon: User, path: '/profile' },
     { id: 'orders', label: 'My Orders', icon: Package, path: '/orders' },
     { id: 'wishlist', label: 'Wishlist', icon: Heart, path: '/wishlist' },
     { id: 'addresses', label: 'Addresses', icon: MapPin, path: '/profile/addresses' },
@@ -10,58 +12,89 @@ const menuItems = [
 ]
 
 export default function ProfileSidebar({ activeSection, onSectionChange }) {
-    const location = useLocation()
+    const navigate = useNavigate();
+    
+    const handleNavigation = (item) => {
+        if (item.path) {
+            navigate(item.path);
+        }
+        if (onSectionChange) {
+            onSectionChange(item.id);
+        }
+    };
 
     return (
-        <div className="w-80 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-sm border border-accent/20 p-6">
-
-                {/* Profile Header */}
-                <div className="text-center pb-6 mb-6 border-b border-accent/20">
-                    <div className="w-20 h-20 bg-primary/10 rounded-full mx-auto mb-3 flex items-center justify-center">
-                        <User size={32} className="text-primary" />
-                    </div>
-                    <h3 className="font-heading text-lg font-semibold text-heading">Welcome back!</h3>
-                    <p className="font-body text-sm text-heading-muted mt-1">Manage your account</p>
+        <div className="w-full">
+            {/* Desktop Sidebar */}
+            <div className="hidden lg:flex flex-col gap-4 sticky top-40">
+                <div className="px-5 mb-2">
+                    <h3 className="font-heading font-bold text-2xl text-shelf">
+                        Dashboard
+                    </h3>
+                    <div className="h-0.5 w-8 bg-burgundy mt-2"></div>
                 </div>
 
-                {/* Navigation Menu */}
-                <nav className="space-y-2">
-                    {menuItems.map(({ id, label, icon: Icon, path }) => {
-                        const isActive = activeSection === id ||
-                                       (id === 'personal' && location.pathname === '/profile') ||
-                                       location.pathname === path
-
+                <nav className="flex flex-col gap-1.5">
+                    {menuItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeSection === item.id;
                         return (
-                            <Link
-                                key={id}
-                                to={path}
-                                onClick={() => onSectionChange(id)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
-                                    ${isActive
-                                        ? 'bg-primary text-white shadow-sm'
-                                        : 'text-heading-muted hover:bg-accent/5 hover:text-heading'
-                                    }`}
+                            <button
+                                key={item.id}
+                                onClick={() => handleNavigation(item)}
+                                className={`relative flex items-center gap-4 px-5 py-4 rounded transition-all duration-300 text-left group ${
+                                    isActive 
+                                    ? 'text-paper font-bold' 
+                                    : 'text-shelf/60 hover:text-shelf hover:bg-shelf/5'
+                                }`}
                             >
-                                <Icon size={18} />
-                                <span className="font-body font-medium">{label}</span>
-                            </Link>
-                        )
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="activeSidebarBg"
+                                        className="absolute inset-0 bg-shelf rounded-sm z-0 shadow-lg"
+                                        initial={false}
+                                        transition={{
+                                            type: 'spring',
+                                            stiffness: 350,
+                                            damping: 35
+                                        }}
+                                    />
+                                )}
+                                <span className="relative z-10 flex items-center gap-4">
+                                    <Icon size={18} className={isActive ? 'text-burgundy' : 'group-hover:text-burgundy transition-colors'} />
+                                    <span className="font-ui text-xs uppercase tracking-widest">{item.label}</span>
+                                </span>
+                            </button>
+                        );
                     })}
                 </nav>
+            </div>
 
-                {/* Settings */}
-                <div className="mt-8 pt-6 border-t border-accent/20">
-                    <Link
-                        to="/settings"
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-heading-muted
-                                 hover:bg-accent/5 hover:text-heading transition-all duration-200"
-                    >
-                        <Settings size={18} />
-                        <span className="font-body font-medium">Settings</span>
-                    </Link>
+            {/* Mobile/Tablet Horizontal Tabs */}
+            <div className="lg:hidden mb-10 overflow-x-auto pb-4 -mx-6 px-6 scrollbar-hide">
+                <div className="flex gap-3 min-w-max">
+                    {menuItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeSection === item.id;
+                        return (
+                            <button
+                                key={item.id}
+                                onClick={() => handleNavigation(item)}
+                                className={`relative flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 whitespace-nowrap border ${
+                                    isActive 
+                                    ? 'bg-shelf text-paper border-shelf shadow-lg' 
+                                    : 'bg-white text-shelf/60 border-shelf/10 hover:border-burgundy/30'
+                                }`}
+                            >
+                                <span className="flex items-center gap-2">
+                                    <Icon size={14} className={isActive ? 'text-burgundy' : ''} />
+                                    <span className="font-ui text-[10px] uppercase font-bold tracking-widest">{item.label}</span>
+                                </span>
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
         </div>
-    )
+    );
 }

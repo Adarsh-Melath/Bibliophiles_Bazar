@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.security.SecureRandom;
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +57,7 @@ public class AuthService {
 
     @Transactional
     public void sendOtp(String email) {
-       String code = String.format("%06d", new SecureRandom().nextInt(1000000));
+        String code = String.format("%06d", new SecureRandom().nextInt(1000000));
 
         OTPToken otp = new OTPToken();
         otp.setEmail(email);
@@ -184,9 +182,7 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
-        
+
         otpTokenRepository.deleteByEmail(otp.getEmail());
     }
 }
-
-

@@ -1,5 +1,24 @@
-import z from "zod";
+import z from 'zod';
 
+export const bookFormSchema = z.object({
+    title: z.string().min(1, 'Title is required'),
+    author: z.string().min(1, 'Author is required'),
+    isbn: z.string().min(10, 'ISBN must be at least 10 characters'),
+    category: z.string().min(1, 'Category is required'),
+    description: z
+        .string()
+        .min(20, 'Description must be at least 20 characters'),
+    price: z.coerce.number().min(0.01, 'Price must be greater than 0'),
+    stock: z.coerce.number().int().min(0, 'Stock cannot be negative'),
+    coverImageUrl: z
+        .string()
+        .url('Enter a valid URL')
+        .optional()
+        .or(z.literal('')),
+    language: z.string().optional(),
+    pages: z.coerce.number().int().min(1).optional().or(z.literal('')),
+    publishedDate: z.string().optional(),
+});
 
 export const vendorSignUpSchema = z.object({
     // Step 1 — Contact info

@@ -1,20 +1,21 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-    LayoutDashboard, Tag, Store, BookOpen,
+    LayoutDashboard, Users, Store, BookOpen,
     ShoppingBag, Library, ShieldCheck,
-    FileCheck, Settings, LogOut
+    CreditCard, Settings, LogOut, BarChart2
 } from 'lucide-react'
 import { useAuthStore } from '../../../store/authStore'
+import { motion } from 'framer-motion'
 
 const NAV_ITEMS = [
-    { label: 'Dashboard', icon: LayoutDashboard, to: '/admin/dashboard' },
-    { label: 'Categories', icon: Tag, to: '/admin/categories' },
+    { label: 'Overview', icon: LayoutDashboard, to: '/admin/dashboard' },
+    { label: 'Users', icon: Users, to: '/admin/users' },
     { label: 'Vendors', icon: Store, to: '/admin/vendors' },
     { label: 'Books', icon: BookOpen, to: '/admin/books' },
     { label: 'Orders', icon: ShoppingBag, to: '/admin/orders' },
-    { label: 'Collections', icon: Library, to: '/admin/collections' },
-    { label: 'Admins', icon: ShieldCheck, to: '/admin/admins' },
-    { label: 'Vendor Payouts', icon: FileCheck, to: '/admin/vendor-payouts' },
+    { label: 'Categories', icon: Library, to: '/admin/categories' },
+    { label: 'Insights', icon: BarChart2, to: '/admin/analytics' },
+    { label: 'Payments', icon: CreditCard, to: '/admin/vendor-payouts' },
     { label: 'Settings', icon: Settings, to: '/admin/settings' },
 ]
 
@@ -28,59 +29,84 @@ export default function AdminSidebar() {
     }
 
     return (
-        <aside className="w-56 shrink-0 min-h-screen flex flex-col"
-            style={{ background: 'linear-gradient(180deg, #3d5a3e 0%, #2d4a2e 100%)' }}>
+        <aside className="w-64 shrink-0 min-h-screen flex flex-col bg-shelf relative z-20 border-r border-shelf shadow-2xl">
+            {/* Archival Texture */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.05] mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/dark-wood.png')]" />
 
-            {/* Logo */}
-            <div className="px-5 py-5 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                    <BookOpen size={20} className="text-white" />
-                    <span className="font-heading text-base font-bold text-white">
-                        The Bibliophile's Bazar
-                    </span>
+            {/* Brand Identity */}
+            <div className="px-8 py-10 border-b border-paper/5 relative z-10">
+                <div className="flex items-center gap-4 group cursor-pointer">
+                    <div className="w-10 h-10 bg-burgundy rounded-sm flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <Library size={20} className="text-paper" />
+                    </div>
+                    <div>
+                        <span className="font-heading text-lg font-bold text-paper block leading-none tracking-tight">
+                            Admin Portal
+                        </span>
+                        <span className="font-ui text-[8px] uppercase tracking-[0.4em] text-burgundy font-bold mt-1 block">
+                            Control Panel
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            {/* Nav */}
-            <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5">
+            {/* Navigation */}
+            <nav className="flex-1 px-4 py-8 flex flex-col gap-2 relative z-10">
                 {NAV_ITEMS.map(({ label, icon: Icon, to }) => (
-                    <NavLink key={to} to={to}
+                    <NavLink
+                        key={to}
+                        to={to}
                         className={({ isActive }) =>
-                            `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm
-                             font-body transition-all duration-200
+                            `group flex items-center gap-4 px-6 py-4 rounded-sm text-[10px] uppercase font-bold tracking-[0.25em] transition-all duration-500 relative
                              ${isActive
-                                ? 'bg-white/20 text-white font-medium'
-                                : 'text-white/60 hover:bg-white/10 hover:text-white'
+                                ? 'text-paper bg-burgundy shadow-shelf'
+                                : 'text-paper/40 hover:text-paper hover:bg-paper/5'
                             }`
-                        }>
-                        <Icon size={15} />
-                        {label}
+                        }
+                    >
+                        {({ isActive }) => (
+                            <>
+                                {isActive && (
+                                    <motion.div 
+                                        layoutId="active-indicator"
+                                        className="absolute left-0 w-1 h-6 bg-paper rounded-r-full"
+                                    />
+                                )}
+                                <Icon size={14} className={`${isActive ? 'text-paper' : 'text-paper/20 group-hover:text-burgundy'} transition-colors`} />
+                                <span className="flex-1">{label}</span>
+                                {isActive && <div className="w-1.5 h-1.5 rounded-full bg-paper animate-pulse" />}
+                            </>
+                        )}
                     </NavLink>
                 ))}
             </nav>
 
-            {/* Admin profile + logout */}
-            <div className="px-4 py-4 border-t border-white/10">
-                <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center
-                                    justify-center text-white text-xs font-bold">
+            {/* Admin Profile */}
+            <div className="px-6 py-8 border-t border-paper/10 bg-black/20 relative z-10">
+                <div className="flex items-center gap-4 mb-6 px-2">
+                    <div className="w-10 h-10 rounded-sm bg-paper/5 border border-paper/10 flex items-center
+                                    justify-center text-paper font-heading text-lg font-bold shadow-inner">
                         {user?.name?.charAt(0) || 'A'}
                     </div>
+
                     <div className="flex-1 min-w-0">
-                        <p className="font-body text-xs font-medium text-white truncate">
+                        <p className="font-heading text-sm font-bold text-paper truncate tracking-tight">
                             {user?.name}
                         </p>
-                        <p className="font-body text-xs text-white/50 truncate">
-                            {user?.email}
+                        <p className="font-ui text-[8px] uppercase tracking-widest text-burgundy font-bold mt-0.5">
+                            Admin Status
                         </p>
                     </div>
                 </div>
-                <button onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl
-                               text-white/60 hover:text-white hover:bg-white/10
-                               font-body text-xs transition-all duration-200">
+
+                <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-sm
+                               text-paper/60 hover:text-paper hover:bg-burgundy
+                               font-ui text-[9px] font-bold uppercase tracking-[0.3em] transition-all duration-500 border border-paper/5 hover:border-burgundy"
+                >
                     <LogOut size={14} />
-                    Sign Out
+                    Logout
                 </button>
             </div>
         </aside>

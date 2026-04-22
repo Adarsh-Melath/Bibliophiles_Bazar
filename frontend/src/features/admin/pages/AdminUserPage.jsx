@@ -1,12 +1,26 @@
 import { useState } from 'react'
-import { Search, X, ShieldOff, ShieldCheck, ChevronLeft, ChevronRight, Loader } from 'lucide-react'
+import {
+    Search, X, ShieldOff, ShieldCheck,
+    ChevronLeft, ChevronRight, Loader,
+    Eye, Pencil, Trash2, Users, UserCheck,
+    UserX, UserPlus, Filter
+} from 'lucide-react'
 import { useToggleBlock, useAdminUsers } from '../hooks/useAdminUser'
+import AdminSidebar from '../components/AdminSideBar'
+import AdminTopBar from '../components/AdminTopBar'
+
+const STAT_CARDS = (total, active, blocked) => [
+    { label: 'Total Customers', value: total, icon: Users, color: 'bg-blue-50 text-blue-600' },
+    { label: 'Active Customers', value: active, icon: UserCheck, color: 'bg-green-50 text-green-600' },
+    { label: 'Blocked Accounts', value: blocked, icon: UserX, color: 'bg-red-50 text-red-500' },
+    { label: 'New Registrations', value: 128, sub: 'This Week', icon: UserPlus, color: 'bg-purple-50 text-purple-600' },
+]
 
 export default function AdminUsersPage() {
     const [search, setSearch] = useState('')
     const [searchInput, setSearchInput] = useState('')
     const [page, setPage] = useState(0)
-    const [confirmModal, setConfirmModal] = useState(null) // { id, name, blocked }
+    const [confirmModal, setConfirmModal] = useState(null)
     const SIZE = 10
 
     const { data, isLoading } = useAdminUsers({ search, page, size: SIZE })
@@ -15,6 +29,8 @@ export default function AdminUsersPage() {
     const users = data?.content || []
     const totalPages = data?.totalPages || 0
     const totalElements = data?.totalElements || 0
+    const activeCount = users.filter(u => !u.blocked).length
+    const blockedCount = users.filter(u => u.blocked).length
 
     const handleSearch = (e) => {
         e.preventDefault()
@@ -34,162 +50,173 @@ export default function AdminUsersPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#EFEBE9] relative overflow-hidden">
-            {/* Ambient Background Glows */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-[#9CAF88]/10 rounded-full blur-[120px]" />
-                <div className="absolute top-[40%] left-[-10%] w-[600px] h-[600px] bg-[#D7CCC8]/30 rounded-full blur-[120px]" />
-            </div>
+        <div className="flex min-h-screen bg-[#f5f5f0]">
+            <AdminSidebar />
 
-            <div className="relative z-10 hidden md:block">
-                {/* Admin Navbar */}
-                <div className="h-20 glass-panel border-b border-white/50 shadow-sm flex items-center px-10 justify-between sticky top-0 z-40 bg-white/40 backdrop-blur-md">
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-white/60 shadow-sm flex items-center justify-center border border-white/80">
-                            <ShieldCheck size={20} className="text-[#548C8C]" strokeWidth={1.5} />
-                        </div>
-                        <div>
-                            <span className="text-[9px] uppercase tracking-[0.25em] text-[#8fa2a2] mb-0.5 block font-bold">Administration</span>
-                            <span className="text-editoral text-lg tracking-tight text-[#3b5a5a] font-medium leading-none">Curator Collection</span>
-                        </div>
-                    </div>
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-[#8fa2a2] bg-white/50 px-4 py-2 rounded-full border border-white/40 font-bold shadow-sm">Patron Directory</span>
-                </div>
-            </div>
+            <div className="flex-1 flex flex-col min-w-0">
+                <AdminTopBar />
 
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12 relative z-10 animate-cinematic">
+                <div className="flex-1 p-8 overflow-y-auto">
 
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
-                    <div>
-                        <h1 className="text-editorial text-[32px] lg:text-[40px] text-[#3b5a5a] font-light tracking-tight leading-none mb-2">Member Directory</h1>
-                        <p className="text-[13px] text-[#8fa2a2] font-medium tracking-wide">
-                            Managing <span className="font-bold text-[#548C8C]">{totalElements}</span> registered patrons globally.
+                    {/* Page header */}
+                    <div className="mb-6">
+                        <h1 className="font-heading text-2xl font-bold text-heading">
+                            Customer Management
+                        </h1>
+                        <p className="font-body text-sm text-gray-500 mt-1">
+                            View, monitor, and manage bookstore customers.
                         </p>
                     </div>
 
-                    {/* Search */}
-                    <form onSubmit={handleSearch} className="flex items-center gap-3">
-                        <div className="relative group">
+                    {/* Search + Filters bar */}
+                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-5
+                                    flex items-center gap-3">
+                        <form onSubmit={handleSearch} className="flex-1 relative">
                             <input
                                 value={searchInput}
                                 onChange={e => setSearchInput(e.target.value)}
-                                placeholder="Search via identity or email..."
-                                className="w-full md:w-80 pl-11 pr-10 py-3.5 rounded-2xl border border-[#548C8C]/15 bg-white/40 backdrop-blur-md
-                                           font-sans text-[14px] text-[#3b5a5a] placeholder-[#8fa2a2]/60 font-medium
-                                           focus:outline-none focus:border-[#548C8C]/40 focus:bg-white/70 focus:shadow-[0_4px_20px_rgba(84,140,140,0.06)]
-                                           transition-all duration-500 ease-out"
+                                placeholder="Search customers by name or email"
+                                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-gray-200
+                                           bg-gray-50 font-body text-sm text-heading placeholder-gray-400
+                                           focus:outline-none focus:ring-2 focus:ring-primary
+                                           transition-all duration-200"
                             />
-                            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8fa2a2] group-focus-within:text-[#548C8C] transition-colors duration-500" strokeWidth={1.5} />
+                            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             {searchInput && (
                                 <button type="button" onClick={handleClearSearch}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8fa2a2] hover:text-[#548C8C] hover:rotate-90 transition-all duration-300 p-1">
-                                    <X size={16} strokeWidth={1.5} />
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400
+                                               hover:text-heading transition-colors">
+                                    <X size={15} />
                                 </button>
                             )}
-                        </div>
-                        <button type="submit"
-                            className="px-6 py-3.5 rounded-2xl bg-[#548C8C] text-white text-[11px] font-bold tracking-[0.15em] uppercase
-                                       hover:bg-[#3b5a5a] hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(84,140,140,0.25)]
-                                       transition-all duration-500 ease-out shadow-sm border border-transparent">
-                            Locate
-                        </button>
-                    </form>
-                </div>
+                        </form>
 
-                {/* Table Container */}
-                <div className="glass-panel p-2 rounded-[2rem] shadow-[0_20px_60px_rgba(84,140,140,0.06)] border border-white/60 backdrop-blur-xl mb-10 overflow-hidden">
-                    <div className="bg-white/40 rounded-[1.5rem] overflow-x-auto">
-                        <table className="w-full min-w-[800px]">
+                        {/* Filter dropdowns */}
+                        {['Account Status', 'Order Activity', 'Registration Date'].map(f => (
+                            <button key={f}
+                                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200
+                                           bg-white font-body text-sm text-gray-600 hover:border-primary
+                                           hover:text-primary transition-all duration-200 whitespace-nowrap">
+                                <Filter size={13} />
+                                {f}
+                                <ChevronRight size={13} className="rotate-90" />
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Stat cards */}
+                    <div className="grid grid-cols-4 gap-4 mb-6">
+                        {STAT_CARDS(totalElements, totalElements - blockedCount, blockedCount).map((stat, i) => (
+                            <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.color}`}>
+                                        <stat.icon size={18} />
+                                    </div>
+                                    <p className="font-body text-xs text-gray-500">{stat.label}</p>
+                                </div>
+                                <p className="font-heading text-2xl font-bold text-heading">{stat.value}</p>
+                                {stat.sub && (
+                                    <p className="font-body text-xs text-gray-400 mt-0.5">{stat.sub}</p>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Table */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <table className="w-full">
                             <thead>
-                                <tr className="border-b border-[#548C8C]/10 bg-white/50">
-                                    <th className="text-left px-8 py-5 text-[10px] uppercase tracking-[0.2em] text-[#8fa2a2] font-bold">Patron Identity</th>
-                                    <th className="text-left px-8 py-5 text-[10px] uppercase tracking-[0.2em] text-[#8fa2a2] font-bold">Clearance</th>
-                                    <th className="text-left px-8 py-5 text-[10px] uppercase tracking-[0.2em] text-[#8fa2a2] font-bold">Inducted</th>
-                                    <th className="text-left px-8 py-5 text-[10px] uppercase tracking-[0.2em] text-[#8fa2a2] font-bold">Status</th>
-                                    <th className="text-right px-8 py-5 text-[10px] uppercase tracking-[0.2em] text-[#8fa2a2] font-bold">Operations</th>
+                                <tr className="bg-gray-50 border-b border-gray-100">
+                                    {['Customer ID', 'Name', 'Email', 'Total Orders', 'Total Spent', 'Account Status', 'Joined Date', 'Actions'].map(h => (
+                                        <th key={h} className="text-left px-5 py-3.5 font-body text-xs
+                                                               font-semibold text-gray-400 uppercase tracking-wider">
+                                            {h}
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#548C8C]/10">
+                            <tbody className="divide-y divide-gray-50">
                                 {isLoading ? (
                                     <tr>
-                                        <td colSpan={5} className="text-center py-24">
-                                            <div className="flex flex-col items-center gap-4">
-                                                <Loader size={28} className="animate-spin text-[#548C8C]" strokeWidth={1.5} />
-                                                <span className="text-[10px] uppercase tracking-[0.2em] text-[#8fa2a2] font-bold">Retrieving records...</span>
-                                            </div>
+                                        <td colSpan={8} className="text-center py-16">
+                                            <Loader size={24} className="animate-spin text-primary mx-auto" />
                                         </td>
                                     </tr>
                                 ) : users.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="text-center py-24">
-                                            <div className="flex flex-col items-center gap-2 text-[#8fa2a2]">
-                                                <Search size={32} strokeWidth={1} className="mb-2 opacity-50" />
-                                                <span className="text-[12px] uppercase tracking-[0.15em] font-medium">No matching records found</span>
-                                            </div>
+                                        <td colSpan={8} className="text-center py-16 font-body text-sm text-gray-400">
+                                            No customers found
                                         </td>
                                     </tr>
-                                ) : users.map(user => (
-                                    <tr key={user.id} className="hover:bg-white/60 transition-colors duration-300 group">
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-full bg-[#EFEBE9] border border-white shadow-sm flex items-center justify-center text-[#548C8C] font-bold text-[14px]">
-                                                    {user.name.charAt(0).toUpperCase()}
-                                                </div>
-                                                <div>
-                                                    <p className="font-sans text-[15px] font-semibold text-[#3b5a5a] group-hover:text-[#548C8C] transition-colors">
-                                                        {user.name}
-                                                    </p>
-                                                    <p className="font-sans text-[13px] text-[#8fa2a2] mt-0.5 font-medium">
-                                                        {user.email}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            {user.role === 'ADMIN' ? (
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#3b5a5a] text-white text-[9px] uppercase tracking-[0.15em] font-bold shadow-sm">
-                                                    <ShieldCheck size={10} strokeWidth={2.5} /> Curator
-                                                </span>
-                                            ) : (
-                                                <span className="inline-block px-3 py-1.5 rounded-full bg-[#8fa2a2]/15 text-[#8fa2a2] text-[9px] uppercase tracking-[0.15em] font-bold">
-                                                    Member
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <p className="font-sans text-[14px] text-[#548C8C] font-medium">
-                                                {new Date(user.createdAt).toLocaleDateString('en-IN', {
-                                                    day: 'numeric', month: 'short', year: 'numeric'
-                                                })}
-                                            </p>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <span className={`inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.15em] font-bold
-                                                ${user.blocked ? 'text-red-500' : 'text-[#548C8C]'}`}>
-                                                <span className={`w-1.5 h-1.5 rounded-full ${user.blocked ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-[#548C8C] shadow-[0_0_8px_rgba(84,140,140,0.5)]'}`}></span>
-                                                {user.blocked ? 'Suspended' : 'Operational'}
+                                ) : users.map((user, idx) => (
+                                    <tr key={user.id} className="hover:bg-gray-50/60 transition-colors">
+                                        {/* Customer ID */}
+                                        <td className="px-5 py-4">
+                                            <span className="font-body text-sm text-[#548C8C] font-medium">
+                                                CUS-{String(1040 + idx + page * SIZE).padStart(4, '0')}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-5 text-right">
-                                            {user.role !== 'ADMIN' && (
-                                                <button
-                                                    onClick={() => setConfirmModal({
-                                                        id: user.id,
-                                                        name: user.name,
-                                                        blocked: user.blocked
-                                                    })}
-                                                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] uppercase font-bold tracking-[0.15em] border transition-all duration-300 ml-auto
-                                                        ${user.blocked
-                                                            ? 'bg-white/50 text-[#548C8C] border-[#548C8C]/20 hover:bg-[#548C8C] hover:text-white hover:border-[#548C8C] hover:shadow-sm'
-                                                            : 'bg-white/50 text-[#8fa2a2] border-[#8fa2a2]/20 hover:bg-white hover:text-red-500 hover:border-red-500/30 hover:shadow-sm'
-                                                        }`}>
-                                                    {user.blocked
-                                                        ? <><ShieldCheck size={12} strokeWidth={2} /> Restore Access</>
-                                                        : <><ShieldOff size={12} strokeWidth={2} /> Suspend</>
-                                                    }
+                                        {/* Name */}
+                                        <td className="px-5 py-4">
+                                            <span className="font-body text-sm font-semibold text-[#548C8C]
+                                                             hover:underline cursor-pointer">
+                                                {user.name}
+                                            </span>
+                                        </td>
+                                        {/* Email */}
+                                        <td className="px-5 py-4">
+                                            <span className="font-body text-sm text-gray-500">{user.email}</span>
+                                        </td>
+                                        {/* Total Orders — static for now */}
+                                        <td className="px-5 py-4">
+                                            <span className="font-body text-sm text-heading">—</span>
+                                        </td>
+                                        {/* Total Spent — static for now */}
+                                        <td className="px-5 py-4">
+                                            <span className="font-body text-sm text-heading">—</span>
+                                        </td>
+                                        {/* Status */}
+                                        <td className="px-5 py-4">
+                                            <span className={`font-body text-xs px-2.5 py-1 rounded-full font-medium
+                                                ${user.blocked
+                                                    ? 'bg-red-100 text-red-600'
+                                                    : 'bg-green-100 text-green-700'
+                                                }`}>
+                                                {user.blocked ? 'Blocked' : 'Active'}
+                                            </span>
+                                        </td>
+                                        {/* Joined */}
+                                        <td className="px-5 py-4">
+                                            <span className="font-body text-sm text-gray-500">
+                                                {new Date(user.createdAt).toLocaleDateString('en-IN', {
+                                                    day: '2-digit', month: 'short', year: 'numeric'
+                                                })}
+                                            </span>
+                                        </td>
+                                        {/* Actions */}
+                                        <td className="px-5 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400
+                                                                   hover:text-[#548C8C] transition-colors">
+                                                    <Eye size={15} />
                                                 </button>
-                                            )}
+                                                <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400
+                                                                   hover:text-gray-600 transition-colors">
+                                                    <Pencil size={15} />
+                                                </button>
+                                                {user.role !== 'ADMIN' && (
+                                                    <button
+                                                        onClick={() => setConfirmModal({
+                                                            id: user.id,
+                                                            name: user.name,
+                                                            blocked: user.blocked
+                                                        })}
+                                                        className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400
+                                                                   hover:text-red-500 transition-colors">
+                                                        <Trash2 size={15} />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -198,22 +225,22 @@ export default function AdminUsersPage() {
 
                         {/* Pagination */}
                         {totalPages > 1 && (
-                            <div className="flex items-center justify-between px-8 py-5 border-t border-[#548C8C]/10 bg-white/40">
-                                <p className="text-[11px] uppercase tracking-[0.15em] text-[#8fa2a2] font-semibold">
+                            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
+                                <p className="font-body text-sm text-gray-400">
                                     Page {page + 1} of {totalPages}
                                 </p>
-                                <div className="flex items-center gap-3">
-                                    <button
-                                        onClick={() => setPage(p => p - 1)}
-                                        disabled={page === 0}
-                                        className="w-8 h-8 rounded-full flex items-center justify-center border border-[#8fa2a2]/30 text-[#8fa2a2] hover:text-[#548C8C] hover:border-[#548C8C] hover:bg-white transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-white/50">
-                                        <ChevronLeft size={16} strokeWidth={2} />
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => setPage(p => p - 1)} disabled={page === 0}
+                                        className="p-2 rounded-lg border border-gray-200 text-gray-400
+                                                   hover:border-primary hover:text-primary transition-all
+                                                   disabled:opacity-40 disabled:cursor-not-allowed">
+                                        <ChevronLeft size={16} />
                                     </button>
-                                    <button
-                                        onClick={() => setPage(p => p + 1)}
-                                        disabled={page >= totalPages - 1}
-                                        className="w-8 h-8 rounded-full flex items-center justify-center border border-[#8fa2a2]/30 text-[#8fa2a2] hover:text-[#548C8C] hover:border-[#548C8C] hover:bg-white transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-white/50">
-                                        <ChevronRight size={16} strokeWidth={2} />
+                                    <button onClick={() => setPage(p => p + 1)} disabled={page >= totalPages - 1}
+                                        className="p-2 rounded-lg border border-gray-200 text-gray-400
+                                                   hover:border-primary hover:text-primary transition-all
+                                                   disabled:opacity-40 disabled:cursor-not-allowed">
+                                        <ChevronRight size={16} />
                                     </button>
                                 </div>
                             </div>
@@ -224,46 +251,45 @@ export default function AdminUsersPage() {
 
             {/* Confirm Block/Unblock Modal */}
             {confirmModal && (
-                <div className="fixed inset-0 bg-[#f7f6f4]/90 backdrop-blur-md flex items-center justify-center z-50 px-4 py-12">
-                    <div className="glass-panel rounded-2xl w-full max-w-sm shadow-[0_20px_60px_rgba(84,140,140,0.12)] relative animate-cinematic border border-white/50 p-8">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm border border-white/80 ${confirmModal.blocked ? 'bg-[#548C8C]' : 'bg-red-500'}`}>
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center
+                                justify-center z-50 px-4">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center
+                                ${confirmModal.blocked ? 'bg-green-50' : 'bg-red-50'}`}>
                                 {confirmModal.blocked
-                                    ? <ShieldCheck size={20} className="text-white" strokeWidth={2} />
-                                    : <ShieldOff size={20} className="text-white" strokeWidth={2} />
+                                    ? <ShieldCheck size={18} className="text-green-600" />
+                                    : <ShieldOff size={18} className="text-red-500" />
                                 }
                             </div>
-                            <button onClick={() => setConfirmModal(null)} className="text-[#8fa2a2] hover:text-[#3b5a5a] transition-all hover:rotate-90 duration-500 p-2 bg-white/50 rounded-full">
-                                <X size={16} strokeWidth={2} />
-                            </button>
+                            <div>
+                                <h3 className="font-heading text-base font-bold text-heading">
+                                    {confirmModal.blocked ? 'Unblock User' : 'Block User'}
+                                </h3>
+                                <p className="font-body text-xs text-gray-400">{confirmModal.name}</p>
+                            </div>
                         </div>
-
-                        <div>
-                            <span className="text-[10px] uppercase tracking-[0.25em] text-[#8fa2a2] mb-1 font-bold block">Authorization Change</span>
-                            <h3 className="text-editorial text-[24px] text-[#3b5a5a] font-light tracking-tight leading-none mb-1">
-                                {confirmModal.blocked ? 'Restore Access' : 'Suspend Patron'}
-                            </h3>
-                            <p className="font-sans text-[14px] text-[#548C8C] font-semibold mb-5">
-                                {confirmModal.name}
-                            </p>
-                            <p className="text-[13px] text-[#8fa2a2] font-medium leading-relaxed mb-8 bg-white/30 p-4 rounded-xl border border-white/50">
-                                {confirmModal.blocked
-                                    ? 'Restoring access will immediately allow this patron to log in and resume standard platform activities.'
-                                    : 'Suspending this patron will instantly revoke their session and block all future attempts to authenticate.'
-                                }
-                            </p>
-                        </div>
-
-                        <div className="flex gap-4">
+                        <p className="font-body text-sm text-gray-500 mb-6">
+                            {confirmModal.blocked
+                                ? 'This user will be able to log in and use the platform again.'
+                                : 'This user will be immediately logged out and unable to access the platform.'
+                            }
+                        </p>
+                        <div className="flex gap-3">
                             <button onClick={() => setConfirmModal(null)}
-                                className="flex-1 py-3.5 rounded-full border border-[#8fa2a2]/30 text-[#8fa2a2] text-[10px] font-bold tracking-[0.2em] uppercase bg-white/20 hover:bg-white hover:text-[#548C8C] transition-all">
+                                className="flex-1 py-2.5 rounded-xl border-2 border-gray-200
+                                           font-button text-sm font-medium text-heading
+                                           hover:border-primary hover:text-primary transition-all">
                                 Cancel
                             </button>
                             <button onClick={handleToggleBlock} disabled={isToggling}
-                                className={`flex-1 py-3.5 rounded-full text-white text-[10px] font-bold tracking-[0.2em] uppercase shadow-sm border border-transparent transition-all hover:-translate-y-0.5 active:translate-y-0 flex justify-center items-center gap-2
-                                    ${confirmModal.blocked ? 'bg-[#548C8C] hover:bg-[#3b5a5a] hover:shadow-[0_10px_20px_rgba(84,140,140,0.2)]' : 'bg-red-500 hover:bg-red-600 hover:shadow-[0_10px_20px_rgba(239,68,68,0.2)]'}
-                                    disabled:opacity-60 disabled:hover:translate-y-0 disabled:cursor-not-allowed`}>
-                                {isToggling ? <Loader size={14} className="animate-spin" /> : confirmModal.blocked ? 'Confirm Restore' : 'Confirm Suspend'}
+                                className={`flex-1 py-2.5 rounded-xl font-button text-sm font-semibold
+                                            text-white transition-all disabled:opacity-60 active:scale-95
+                                            ${confirmModal.blocked
+                                        ? 'bg-green-600 hover:bg-green-700'
+                                        : 'bg-red-500 hover:bg-red-600'
+                                    }`}>
+                                {isToggling ? 'Processing...' : confirmModal.blocked ? 'Unblock' : 'Block'}
                             </button>
                         </div>
                     </div>

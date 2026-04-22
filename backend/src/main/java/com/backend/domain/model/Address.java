@@ -43,4 +43,8 @@ public class Address {
     private String pincode;
 
     private boolean isDefault = false;
+
+    private String addressLine2;
+    private String country;
+    private String addressType; // HOME, WORK, OTHER
 }

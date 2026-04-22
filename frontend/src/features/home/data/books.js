@@ -1,142 +1,152 @@
-export const FALLBACK_COVER_URL =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300' viewBox='0 0 200 300'%3E%3Crect width='200' height='300' fill='%23EFEBE9'/%3E%3Crect x='20' y='20' width='160' height='260' rx='8' fill='%23D7CCC8'/%3E%3Cpath d='M60 120 L100 80 L140 120 M100 80 L100 180' stroke='%239CAF88' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Crect x='55' y='200' width='90' height='8' rx='4' fill='%23548C8C' opacity='0.5'/%3E%3Crect x='70' y='218' width='60' height='6' rx='3' fill='%23548C8C' opacity='0.35'/%3E%3C/svg%3E";
-
-export const bookOfTheMonth = {
-  id: "botm-1",
-  title: "Project Hail Mary",
-  author: "Andy Weir",
-  category: "Science Fiction",
+export const books = [
+{
+  id: '1',
+  title: 'The Midnight Library',
+  author: 'Matt Haig',
+  price: 24.99,
   rating: 4.8,
+  coverUrl:
+  'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop',
   description:
-    "A lone astronaut wakes up millions of miles from Earth with no memory of how he got there. His mission: save the planet from an extinction-level threat. A thrilling, witty, and deeply human story of survival, science, and unexpected friendship across the stars.",
-  price: "$14.99",
-  coverUrl: "https://covers.openlibrary.org/b/id/10527843-L.jpg",
-  coverAlt: "Project Hail Mary book cover by Andy Weir",
-};
-
-export const newReleases = [
-  {
-    id: "nr-1",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    category: "Fiction",
-    rating: 4.5,
-    description: "Between life and death there is a library with infinite possibilities.",
-    price: "$13.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/10909258-L.jpg",
-    coverAlt: "The Midnight Library book cover by Matt Haig",
-  },
-  {
-    id: "nr-2",
-    title: "Atomic Habits",
-    author: "James Clear",
-    category: "Self-Help",
-    rating: 4.9,
-    description: "Tiny changes, remarkable results. A proven framework for building good habits.",
-    price: "$16.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/8739161-L.jpg",
-    coverAlt: "Atomic Habits book cover by James Clear",
-  },
-  {
-    id: "nr-3",
-    title: "Sapiens",
-    author: "Yuval Noah Harari",
-    category: "History",
-    rating: 4.7,
-    description: "A brief history of humankind from the Stone Age to the modern era.",
-    price: "$17.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/8228691-L.jpg",
-    coverAlt: "Sapiens book cover by Yuval Noah Harari",
-  },
-  {
-    id: "nr-4",
-    title: "The Pragmatic Programmer",
-    author: "David Thomas",
-    category: "Technology",
-    rating: 4.6,
-    description: "Your journey to mastery in software development starts here.",
-    price: "$24.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/8091016-L.jpg",
-    coverAlt: "The Pragmatic Programmer book cover",
-  },
-  {
-    id: "nr-5",
-    title: "Educated",
-    author: "Tara Westover",
-    category: "Non-Fiction",
-    rating: 4.8,
-    description: "A memoir about a young woman who leaves her survivalist family to seek education.",
-    price: "$14.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/9255566-L.jpg",
-    coverAlt: "Educated book cover by Tara Westover",
-  },
+  'Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived.',
+  category: 'Fiction'
+},
+{
+  id: '2',
+  title: 'Atomic Habits',
+  author: 'James Clear',
+  price: 21.5,
+  rating: 4.9,
+  coverUrl:
+  'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=800&auto=format&fit=crop',
+  description:
+  'No matter your goals, Atomic Habits offers a proven framework for improving--every day.',
+  category: 'Self Development'
+},
+{
+  id: '3',
+  title: 'Dune',
+  author: 'Frank Herbert',
+  price: 18.99,
+  rating: 4.7,
+  coverUrl:
+  'https://images.unsplash.com/photo-1614726365723-4994b621481f?q=80&w=800&auto=format&fit=crop',
+  description:
+  "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the 'spice' melange.",
+  category: 'Science Fiction'
+},
+{
+  id: '4',
+  title: 'Thinking, Fast and Slow',
+  author: 'Daniel Kahneman',
+  price: 22.0,
+  rating: 4.6,
+  coverUrl:
+  'https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=800&auto=format&fit=crop',
+  description:
+  'The phenomenal New York Times Bestseller by Nobel Prize-winner Daniel Kahneman.',
+  category: 'Non-Fiction'
+},
+{
+  id: '5',
+  title: 'Project Hail Mary',
+  author: 'Andy Weir',
+  price: 26.0,
+  rating: 4.9,
+  coverUrl:
+  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop',
+  description:
+  'A lone astronaut must save the earth from disaster in this incredible new science-based thriller from the #1 New York Times bestselling author of The Martian.',
+  category: 'Science Fiction'
+},
+{
+  id: '6',
+  title: 'Sapiens',
+  author: 'Yuval Noah Harari',
+  price: 25.0,
+  rating: 4.8,
+  coverUrl:
+  'https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=800&auto=format&fit=crop',
+  description:
+  'A brief history of humankind, exploring how biology and history have defined us and enhanced our understanding of what it means to be human.',
+  category: 'History'
+},
+{
+  id: '7',
+  title: 'The Creative Act',
+  author: 'Rick Rubin',
+  price: 28.99,
+  rating: 4.7,
+  coverUrl:
+  'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop',
+  description:
+  'A beautiful and generous course of study that illuminates the path of the artist as a road we all can follow.',
+  category: 'Non-Fiction'
+},
+{
+  id: '8',
+  title: 'Tomorrow, and Tomorrow',
+  author: 'Gabrielle Zevin',
+  price: 24.0,
+  rating: 4.5,
+  coverUrl:
+  'https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop',
+  description:
+  'In this beautifully wrought, wonderfully entertaining novel, two friends—often in love, but never lovers—come together as creative partners in the world of video game design.',
+  category: 'Fiction'
+}
 ];
 
-export const recommended = [
-  {
-    id: "rec-1",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    category: "Fiction",
-    rating: 4.5,
-    description: "Between life and death there is a library with infinite possibilities.",
-    price: "$13.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/10909258-L.jpg",
-    coverAlt: "The Midnight Library book cover",
-  },
-  {
-    id: "rec-2",
-    title: "Atomic Habits",
-    author: "James Clear",
-    category: "Self-Help",
-    rating: 4.9,
-    description: "Tiny changes, remarkable results.",
-    price: "$16.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/8739161-L.jpg",
-    coverAlt: "Atomic Habits book cover",
-  },
-  {
-    id: "rec-3",
-    title: "Sapiens",
-    author: "Yuval Noah Harari",
-    category: "History",
-    rating: 4.7,
-    description: "A brief history of humankind.",
-    price: "$17.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/8228691-L.jpg",
-    coverAlt: "Sapiens book cover",
-  },
-  {
-    id: "rec-4",
-    title: "The Pragmatic Programmer",
-    author: "David Thomas",
-    category: "Technology",
-    rating: 4.6,
-    description: "Your journey to mastery in software development.",
-    price: "$24.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/8091016-L.jpg",
-    coverAlt: "The Pragmatic Programmer book cover",
-  },
-  {
-    id: "rec-5",
-    title: "Educated",
-    author: "Tara Westover",
-    category: "Non-Fiction",
-    rating: 4.8,
-    description: "A memoir about seeking education against all odds.",
-    price: "$14.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/9255566-L.jpg",
-    coverAlt: "Educated book cover",
-  },
-  {
-    id: "rec-6",
-    title: "Project Hail Mary",
-    author: "Andy Weir",
-    category: "Science Fiction",
-    rating: 4.8,
-    description: "A lone astronaut must save Earth from extinction.",
-    price: "$14.99",
-    coverUrl: "https://covers.openlibrary.org/b/id/10527843-L.jpg",
-    coverAlt: "Project Hail Mary book cover",
-  },
+export const upcomingBooks = [
+{
+  id: 'c1',
+  title: 'Winds of Winter',
+  author: 'George R.R. Martin',
+  price: 35.0,
+  rating: 0,
+  coverUrl:
+  'https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=800&auto=format&fit=crop',
+  description:
+  'The highly anticipated sixth novel in the epic fantasy series A Song of Ice and Fire.',
+  category: 'Fantasy',
+  releaseDate: '2026-12-31'
+},
+{
+  id: 'c2',
+  title: 'The City of Brass II',
+  author: 'S.A. Chakraborty',
+  price: 28.0,
+  rating: 0,
+  coverUrl:
+  'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800&auto=format&fit=crop',
+  description: 'Return to the magical Middle Eastern world of Daevabad.',
+  category: 'Fantasy',
+  releaseDate: '2026-08-15'
+},
+{
+  id: 'c3',
+  title: 'Quantum Horizons',
+  author: 'Dr. Sarah Chen',
+  price: 32.0,
+  rating: 0,
+  coverUrl:
+  'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop',
+  description:
+  'A groundbreaking look at the next century of quantum computing.',
+  category: 'Science',
+  releaseDate: '2026-06-01'
+},
+{
+  id: 'c4',
+  title: 'Echoes of Eternity',
+  author: 'Ken Liu',
+  price: 29.99,
+  rating: 0,
+  coverUrl:
+  'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=800&auto=format&fit=crop',
+  description:
+  'A collection of mind-bending short stories exploring time and memory.',
+  category: 'Science Fiction',
+  releaseDate: '2026-09-22'
+}
 ];

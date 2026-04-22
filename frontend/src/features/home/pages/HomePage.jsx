@@ -1,48 +1,38 @@
-import HeroSection from "../components/HeroSection";
-import PartnerLogosRow from "../components/PartnerLogosRow";
-import BookOfTheMonth from "../components/BookOfTheMonth";
-import NewReleasesSection from "../components/NewReleasesSection";
-import CategoriesSection from "../components/CategoriesSection";
-import RecommendedSection from "../components/RecommendedSection";
-import ComingSoonSection from "../components/ComingSoonSection";
-import NewsletterSection from "../components/NewsletterSection";
-import FooterSection from "../components/FooterSection";
+import ReadingProgressBar from '../components/ReadingProgressBar';
+import { FloatingElements } from '../components/FloatingElements';
+import { Navbar } from '../components/Navbar';
+import { HeroSection } from '../components/HeroSection';
+import { PublishersSection } from '../components/PublishersSection';
+import { BookOfTheMonth } from '../components/BookOfTheMonth';
+import { NewReleases } from '../components/NewReleases'
+import { CategorySlider } from '../components/CategorySlider'
+import { RecommendedForYou } from '../components/RecommendedForYou'
+import { ComingSoon } from '../components/ComingSoon'
+import { Newsletter } from '../components/Newsletter'
+import { Footer } from '../components/Footer'
+import PageTransition from '../../../components/ui/PageTransition';
 
-import { bookOfTheMonth, newReleases, recommended } from "../data/books";
-import { categories } from "../data/categories";
-import { comingSoonItems } from "../data/comingSoon";
+export default function App() {
+    return (
+        <div className="min-h-screen bg-paper font-body text-shelf selection:bg-burgundy/10 selection:text-shelf relative">
+            <ReadingProgressBar />
+            <FloatingElements />
+            <Navbar />
 
-export default function HomePage() {
-  return (
-    <main className="library-shell">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 lg:gap-14">
-        {/* 1. Hero */}
-        <HeroSection />
+            <PageTransition>
+                <main>
+                    <HeroSection />
+                    <PublishersSection />
+                    <BookOfTheMonth />
+                    <NewReleases />
+                    <CategorySlider />
+                    <RecommendedForYou />
+                    <ComingSoon />
+                    <Newsletter />
+                </main>
+            </PageTransition>
 
-        {/* 2. Partner Logos */}
-        <PartnerLogosRow />
+            <Footer />
+        </div>);
 
-        {/* 3. Book of the Month */}
-        <BookOfTheMonth book={bookOfTheMonth} />
-
-        {/* 4. New Releases */}
-        <NewReleasesSection books={newReleases} />
-
-        {/* 5. Explore Categories */}
-        <CategoriesSection categories={categories} />
-
-        {/* 6. Recommended For You */}
-        <RecommendedSection books={recommended} />
-
-        {/* 7. Coming Soon */}
-        <ComingSoonSection items={comingSoonItems} />
-
-        {/* 8. Newsletter */}
-        <NewsletterSection />
-
-        {/* 9. Footer */}
-        <FooterSection />
-      </div>
-    </main>
-  );
 }

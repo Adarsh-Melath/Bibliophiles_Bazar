@@ -16,8 +16,10 @@ import com.backend.domain.repository.AddressRepository;
 import com.backend.domain.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 
@@ -63,6 +65,19 @@ public class UserService {
     public AddressResponse addAddress(String email, AddressRequest request) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
+        log.debug("isDefault" +request.isDefault());
+
+        // If adding this address as default, unset all other default addresses for this
+        // user
+        if (request.isDefault()) {
+            log.debug("isDefault in if condition of addAddress Method");
+            List<Address> userAddresses = addressRepository.findByUserId(user.getId());
+            for (Address addr : userAddresses) {
+                addr.setDefault(false);
+                addressRepository.save(addr);
+            }
+        }
+
         Address address = new Address();
         address.setUser(user);
         address.setFullName(request.getFullName());
@@ -72,8 +87,13 @@ public class UserService {
         address.setState(request.getState());
         address.setPincode(request.getPincode());
         address.setDefault(request.isDefault());
+        address.setAddressLine2(request.getAddressLine2());
+        address.setCountry(request.getCountry());
+        address.setAddressType(request.getAddressType());
 
-        return toAddressResponse(addressRepository.save(address));
+        Address saved = addressRepository.save(address);
+        log.debug("isDefault value after saved in addmethod method" + saved.isDefault());
+        return toAddressResponse(saved);
     }
 
     public AddressResponse updateAddress(String email, Long id, AddressRequest request) {
@@ -82,6 +102,19 @@ public class UserService {
         Address address = addressRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new RuntimeException("Address not found"));
 
+        // If setting this address as default, unset all other default addresses for
+        // this user
+        if (request.isDefault()) {
+            log.debug("isDefault in if condition of update Address Method");
+            List<Address> userAddresses = addressRepository.findByUserId(user.getId());
+            for (Address addr : userAddresses) {
+                if (!addr.getId().equals(id)) {
+                    addr.setDefault(false);
+                    addressRepository.save(addr);
+                }
+            }
+        }
+
         address.setFullName(request.getFullName());
         address.setPhone(request.getPhone());
         address.setAddressLine(request.getAddressLine());
@@ -89,8 +122,14 @@ public class UserService {
         address.setState(request.getState());
         address.setPincode(request.getPincode());
         address.setDefault(request.isDefault());
+        address.setAddressLine2(request.getAddressLine2());
+        address.setCountry(request.getCountry());
+        address.setAddressType(request.getAddressType());
 
-        return toAddressResponse(addressRepository.save(address));
+        Address saved = addressRepository.save(address);
+        log.debug("isDefault value after saved in updateAddress method" + saved.isDefault());
+
+        return toAddressResponse(saved);
     }
 
     public void deleteAddress(String email, Long addressId) {
@@ -109,6 +148,7 @@ public class UserService {
 
     private AddressResponse toAddressResponse(Address address) {
         return new AddressResponse(address.getId(), address.getFullName(), address.getPhone(), address.getAddressLine(),
-                address.getCity(), address.getState(), address.getPincode(), address.isDefault());
+                address.getCity(), address.getState(), address.getPincode(), address.isDefault(),
+                address.getAddressLine2(), address.getCountry(), address.getAddressType());
     }
 }

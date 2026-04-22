@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { BookOpen } from 'lucide-react'
+import { BookOpen, Mail, ArrowLeft, ShieldCheck, Timer, RotateCcw } from 'lucide-react'
+import { motion } from 'framer-motion'
 import api from '../../../lib/axios'
 
 export default function AdminVerifyResetOtpPage() {
@@ -10,7 +11,7 @@ export default function AdminVerifyResetOtpPage() {
     const navigate = useNavigate()
 
     const [otp, setOtp] = useState(['', '', '', '', '', ''])
-    const [timeLeft, setTimeLeft] = useState(60) // 1 minutes
+    const [timeLeft, setTimeLeft] = useState(60)
     const inputRefs = useRef([])
 
     useEffect(() => {
@@ -69,85 +70,113 @@ export default function AdminVerifyResetOtpPage() {
     const seconds = String(timeLeft % 60).padStart(2, '0')
 
     return (
-        <div className="min-h-screen bg-[#EFEBE9] flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-white rounded-3xl shadow-lg overflow-hidden">
-                <div className="h-1 bg-[#9CAF88]" />
-
-                <div className="px-8 py-12">
-                    {/* Icon */}
-                    <div className="flex justify-center mb-6">
-                        <div className="w-16 h-16 bg-[#F5F5F5] rounded-full flex items-center justify-center">
-                            <BookOpen className="w-8 h-8 text-[#548C8C]" strokeWidth={1.5} />
-                        </div>
-                    </div>
-
-                    <h1 className="text-2xl font-bold text-[#548C8C] text-center mb-2">
-                        Verify Code
-                    </h1>
-                    <p className="text-sm text-[#9CAF88] text-center mb-1">
-                        Enter the 6-digit code sent to
-                    </p>
-                    <p className="text-center text-sm font-medium text-[#2C3E50] mb-6">
-                        {email}
-                    </p>
-
-                    {error && (
-                        <div className="mb-4 bg-red-50 border border-red-200 text-red-600 text-xs px-4 py-2 rounded-lg">
-                            {error.response?.data?.error || 'Invalid or expired code'}
-                        </div>
-                    )}
-
-                    {/* OTP inputs */}
-                    <div className="flex justify-center gap-3 mb-4" onPaste={handlePaste}>
-                        {otp.map((digit, i) => (
-                            <input
-                                key={i}
-                                ref={el => inputRefs.current[i] = el}
-                                value={digit}
-                                onChange={e => handleChange(i, e.target.value)}
-                                onKeyDown={e => handleKeyDown(i, e)}
-                                maxLength={1}
-                                className="w-12 h-12 text-center text-lg font-bold rounded-lg border border-[#D7CCC8] bg-[#E8F4F8] focus:outline-none focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20 transition-all"
-                            />
-                        ))}
-                    </div>
-
-                    {/* Timer */}
-                    <p className={`text-center text-xs mb-6 ${isExpired ? 'text-red-500' : 'text-[#9CAF88]'}`}>
-                        {isExpired ? 'Code expired' : `Expires in ${minutes}:${seconds}`}
-                    </p>
-
-                    {/* Verify */}
-                    <button
-                        onClick={() => verifyOtp()}
-                        disabled={!isComplete || isPending || isExpired}
-                        className="w-full py-3 rounded-lg bg-[#9CAF88] hover:bg-[#8FA078] text-white font-semibold text-sm transition-all disabled:opacity-60 mb-3"
-                    >
-                        {isPending ? 'Verifying...' : 'Verify Code'}
-                    </button>
-
-                    {/* Resend */}
-                    <button
-                        onClick={() => resendOtp()}
-                        disabled={timeLeft > 0 || isResending}
-                        className="w-full py-2 rounded-lg border border-[#D7CCC8] text-sm text-[#548C8C] disabled:opacity-50"
-                    >
-                        {timeLeft > 0 ? `Resend in ${minutes}:${seconds}` : 'Resend Code'}
-                    </button>
-
-                    <div className="text-center mt-6">
-                        <Link to="/admin/forgot-password" className="text-xs text-[#9CAF88] hover:text-[#548C8C]">
-                            Back
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="bg-[#F9F9F9] px-8 py-4 border-t border-[#D7CCC8] text-center">
-                    <p className="text-xs text-[#9CAF88] font-medium tracking-wide">
-                        Authorized administrators only.
-                    </p>
-                </div>
+        <div className="h-screen bg-paper flex items-center justify-center p-6 relative overflow-hidden selection:bg-burgundy/10">
+            {/* Background Texture */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                 style={{ backgroundImage: 'radial-gradient(circle, var(--shelf) 1px, transparent 1px)', backgroundSize: '30px 30px' }}>
             </div>
+
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="w-full max-w-md relative"
+            >
+                <div className="library-panel bg-paper shadow-shelf overflow-hidden border-shelf/10">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-burgundy via-shelf to-burgundy" />
+
+                    <div className="px-10 py-8">
+                        {/* Header */}
+                        <div className="flex flex-col items-center mb-8 text-center">
+                            <div className="w-14 h-14 bg-shelf/5 rounded-full flex items-center justify-center mb-4 border border-shelf/5 shadow-inner">
+                                <Mail size={24} className="text-burgundy" />
+                            </div>
+                            <h1 className="font-heading text-2xl font-bold text-shelf tracking-tight">
+                                Verify Code
+                            </h1>
+                            <div className="mt-3 p-3 bg-shelf/[0.02] border border-shelf/5 rounded-sm w-full">
+                                <p className="font-body text-[10px] text-shelf/40 italic leading-relaxed">
+                                    Code sent to:
+                                    <span className="block text-shelf font-medium not-italic mt-1 break-all uppercase tracking-wider">{email}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="mb-6 bg-burgundy/5 border-l-4 border-burgundy text-burgundy text-[10px] font-bold uppercase tracking-widest px-6 py-4">
+                                {error.response?.data?.error || 'Invalid Code'}
+                            </div>
+                        )}
+
+                        {/* OTP Input */}
+                        <div className="flex justify-between gap-3 mb-6" onPaste={handlePaste}>
+                            {otp.map((digit, i) => (
+                                <input
+                                    key={i}
+                                    ref={el => inputRefs.current[i] = el}
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={1}
+                                    value={digit}
+                                    onChange={e => handleChange(i, e.target.value)}
+                                    onKeyDown={e => handleKeyDown(i, e)}
+                                    className="w-full aspect-[4/5] bg-transparent border-b-2 
+                                               text-center text-2xl font-heading font-bold
+                                               border-shelf/10 text-shelf
+                                               focus:outline-none focus:border-burgundy
+                                               transition-all duration-300 placeholder:text-shelf/5"
+                                    placeholder="0"
+                                />
+                            ))}
+                        </div>
+
+                        {/* Timer */}
+                        <div className="mb-8 text-center">
+                            {isExpired ? (
+                                <span className="text-[10px] uppercase font-bold text-burgundy tracking-widest">Code Expired</span>
+                            ) : (
+                                <div className="flex items-center justify-center gap-2 text-shelf/40 font-ui text-[10px] uppercase font-bold tracking-widest">
+                                    <Timer size={12} className="animate-spin-slow" />
+                                    <span>Expires in {minutes}:{seconds}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="space-y-4">
+                            <button
+                                onClick={() => verifyOtp()}
+                                disabled={!isComplete || isPending || isExpired}
+                                className="w-full library-button bg-shelf text-paper py-4 text-[11px] font-bold uppercase tracking-[0.4em]
+                                           flex items-center justify-center gap-3 group disabled:opacity-30 transition-all duration-500 shadow-shelf"
+                            >
+                                {isPending ? 'Checking...' : (
+                                    <>
+                                        <ShieldCheck size={16} className="group-hover:text-burgundy transition-colors" />
+                                        Verify Code
+                                    </>
+                                )}
+                            </button>
+
+                            <button
+                                onClick={() => resendOtp()}
+                                disabled={timeLeft > 0 || isResending}
+                                className="w-full py-2 text-[9px] font-bold uppercase tracking-[0.25em] 
+                                           flex items-center justify-center gap-2 mx-auto hover:text-burgundy text-shelf/40 transition-colors disabled:opacity-30"
+                            >
+                                <RotateCcw size={12} />
+                                {isResending ? 'Sending...' : 'Send New Code'}
+                            </button>
+                        </div>
+
+                        <div className="text-center mt-8 p-4 border-t border-shelf/5">
+                            <Link to="/admin/forgot-password" title="Back" className="font-ui text-[10px] font-bold uppercase tracking-[0.3em] text-shelf/40 hover:text-burgundy flex items-center justify-center gap-2 transition-colors">
+                                <ArrowLeft size={14} />
+                                Change Email
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
         </div>
     )
 }
