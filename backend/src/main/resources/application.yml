@@ -53,4 +53,4 @@ logging:
         org.springframework.security: DEBUG
 
 server:
-    port: 2007
+    port: ${PORT:2007}
