@@ -65,7 +65,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().name());
 
     // Redirect to frontend with tokens
-    String frontendUrl = "http://localhost:5173/oauth2/callback"
+    String frontendUrl = "https://frontend-xi-one-93.vercel.app/oauth2/callback"
         + "?token=" + accessToken;
 
     response.sendRedirect(frontendUrl);
