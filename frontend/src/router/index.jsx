@@ -29,13 +29,14 @@ import VendorBooksPage from '../features/vendor/pages/VendorBooksPage'
 import AddBookPage from '../features/vendor/pages/AddBookPage'
 import EditBookPage from '../features/vendor/pages/EditBookPage'
 import VendorRoute from './VendorRoute'
+import VendorLoginPage from '../features/vendor/pages/VendorLoginPage'
 
 export const router = createBrowserRouter([
   {
     element: <AuthProvider />,
     children: [
-    
-    //user side 
+
+      //user side 
       { path: '/', element: <HomePage /> },
       { path: '/signup', element: <Signup /> },
       { path: '/login', element: <LoginPage /> },
@@ -57,11 +58,12 @@ export const router = createBrowserRouter([
       { path: '/admin/dashboard', element: <AdminRoute><AdminDashboardPage /></AdminRoute> },
       { path: '/admin/users', element: <AdminRoute><AdminUsersPage /></AdminRoute> },
       { path: '/admin/vendors', element: <AdminRoute><AdminVendorsPage /></AdminRoute> },
-      
-      
-      
+
+
+
       //vendor side 
       { path: '/vendor/apply', element: <VendorApplyPage /> },
+      { path: '/vendor/login', element: <VendorLoginPage /> },
       {
         path: '/vendor',
         element: <VendorRoute><VendorLayout /></VendorRoute>,
@@ -76,7 +78,7 @@ export const router = createBrowserRouter([
       //   path: '/vendor/dashboard',
       //   element: <VendorDashboardPage />
       // },
-     
+
     ]
   }
 ])

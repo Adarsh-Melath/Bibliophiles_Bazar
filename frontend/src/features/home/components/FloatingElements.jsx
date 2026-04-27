@@ -27,7 +27,7 @@ export function FloatingElements() {
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className="absolute text-tan opacity-20"
+          className="absolute text-shelf opacity-20"
           initial={{
             x: `${particle.x}vw`,
             y: `${particle.y}vh`,

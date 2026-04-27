@@ -9,14 +9,14 @@ export default function VendorDashboardPage() {
   const user = useAuthStore((state) => state.user)
 
   return (
-    <div className="flex-1 overflow-y-auto bg-offwhite">
+    <div className="flex-1 overflow-y-auto bg-paper">
       <div className="p-8 space-y-8">
         {/* Page header */}
         <div>
-          <h1 className="text-3xl font-heading font-bold text-teal">
+          <h1 className="text-3xl font-heading font-bold text-shelf">
             Welcome back, {user?.name?.split(' ')[0] || 'Vendor'} 👋
           </h1>
-          <p className="text-sm font-body text-teal/60 mt-1">
+          <p className="text-sm font-body text-shelf/60 mt-1">
             Here's what's happening with your store today.
           </p>
         </div>

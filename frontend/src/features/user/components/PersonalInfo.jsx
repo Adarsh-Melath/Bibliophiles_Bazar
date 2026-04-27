@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Edit2 } from 'lucide-react';
+import { Edit2, Shield } from 'lucide-react';
 import { useProfile } from '../hooks/useProfile';
 import ManageProfileModal from './ManageProfileModal';
 
@@ -10,7 +10,7 @@ export default function PersonalInfo() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-2xl p-8 animate-pulse border border-tan/20 mb-8 h-64" />
+      <div className="bg-white rounded-sm p-10 animate-pulse border border-shelf/5 mb-8 h-80" />
     );
   }
 
@@ -23,38 +23,48 @@ export default function PersonalInfo() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.1 }}
-      className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-tan/20 mb-8"
+      transition={{ duration: 0.5 }}
+      className="library-panel p-8 md:p-12 mb-8 relative group border-shelf/5 shadow-soft"
     >
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="font-heading font-bold text-xl text-teal">
-          Personal Information
-        </h2>
+      <div className="flex items-center justify-between mb-12 border-b border-shelf/5 pb-6">
+        <div>
+            <h2 className="font-heading font-bold text-2xl text-shelf">
+                Member Profile
+            </h2>
+            <div className="h-0.5 w-8 bg-burgundy mt-2"></div>
+        </div>
         <button
           onClick={() => setShowModal(true)}
-          className="text-sage hover:text-teal font-ui text-sm font-medium transition-colors flex items-center gap-2"
+          className="text-burgundy hover:text-shelf font-ui text-[10px] font-bold uppercase tracking-[0.2em] transition-all flex items-center gap-2 group/btn"
         >
-          <Edit2 size={16} />
-          Edit Details
+          <div className="w-8 h-8 rounded-full bg-burgundy/5 flex items-center justify-center group-hover/btn:bg-burgundy group-hover/btn:text-white transition-all">
+            <Edit2 size={12} />
+          </div>
+          Edit Record
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
         {infoFields.map((field, index) => (
           <div
             key={index}
-            className="group relative border-b border-tan/20 pb-4 last:border-0 md:[&:nth-last-child(-n+2)]:border-0 md:[&:nth-last-child(-n+2)]:pb-0"
+            className="group relative border-b border-shelf/[0.03] pb-6 last:border-0 md:[&:nth-last-child(-n+2)]:border-0 md:[&:nth-last-child(-n+2)]:pb-0"
           >
-            <p className="font-ui text-xs text-teal/60 uppercase tracking-wider mb-1">
+            <p className="font-ui text-[9px] text-shelf/30 font-bold uppercase tracking-[0.3em] mb-2">
               {field.label}
             </p>
             <div className="flex justify-between items-start">
-              <p className="font-body text-teal font-medium capitalize">{field.value}</p>
+              <p className="font-body text-shelf font-semibold capitalize text-base italic leading-none">{field.value}</p>
             </div>
           </div>
         ))}
+      </div>
+      
+      {/* Decorative Security Seal */}
+      <div className="absolute bottom-10 right-10 text-shelf/[0.02] pointer-events-none group-hover:text-shelf/[0.04] transition-colors">
+        <Shield size={120} strokeWidth={1} />
       </div>
 
       {showModal && (

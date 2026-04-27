@@ -5,29 +5,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        // New homepage design system
+        // Core Design System
         paper: '#FDFBF7',
         shelf: '#2C1E11',
         burgundy: '#800020',
         'burgundy-dark': '#600018',
         'shelf-light': '#3C2A21',
 
-        // Vendor dashboard tokens (must keep)
-        offwhite: '#EFEBE9',
-        teal: '#548C8C',
-        sage: '#9CAF88',
-        'sage-dark': '#7a9668',
-        'tan-dark': '#b8a9a4',
-
-        // Shared tokens
-        tan: '#D7CCC8',
+        // Shared Functional Tokens
         primary: '#800020',
         background: '#FDFBF7',
         heading: '#2C1E11',
-
-        // Legacy library tokens (auth/user/admin pages)
-        'primary-dark': '#8a9d76',
-        accent: '#D7CCC8',
       },
       fontFamily: {
         heading: ['"Playfair Display"', 'serif'],
