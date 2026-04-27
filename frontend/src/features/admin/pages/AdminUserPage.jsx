@@ -21,9 +21,11 @@ export default function AdminUsersPage() {
     const [searchInput, setSearchInput] = useState('')
     const [page, setPage] = useState(0)
     const [confirmModal, setConfirmModal] = useState(null)
+    const [roleFilter, setRoleFilter] = useState('')
+
     const SIZE = 10
 
-    const { data, isLoading } = useAdminUsers({ search, page, size: SIZE })
+    const { data, isLoading } = useAdminUsers({ search, role: roleFilter, page, size: SIZE })
     const { mutate: toggleBlock, isPending: isToggling } = useToggleBlock()
 
     const users = data?.content || []
@@ -92,7 +94,20 @@ export default function AdminUsersPage() {
                         </form>
 
                         {/* Filter dropdowns */}
-                        {['Account Status', 'Order Activity', 'Registration Date'].map(f => (
+                        {/* Role Filter */}
+                        <select
+                            value={roleFilter}
+                            onChange={(e) => { setRoleFilter(e.target.value); setPage(0) }}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200
+               bg-white font-body text-sm text-gray-600 hover:border-primary
+               transition-all duration-200 cursor-pointer"
+                        >
+                            <option value="">All Roles</option>
+                            <option value="USER">Customers</option>
+                            <option value="VENDOR">Vendors</option>
+                            <option value="ADMIN">Admins</option>
+                        </select>
+                        {['Order Activity', 'Registration Date'].map(f => (
                             <button key={f}
                                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200
                                            bg-white font-body text-sm text-gray-600 hover:border-primary
