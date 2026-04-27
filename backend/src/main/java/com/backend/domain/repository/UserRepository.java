@@ -2,10 +2,13 @@
 package com.backend.domain.repository;
 
 import com.backend.domain.model.User;
+
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import com.backend.domain.model.Role;
 
 public interface UserRepository {
 
@@ -20,5 +23,9 @@ public interface UserRepository {
     Page<User> findAll(Pageable pageable);
 
     Page<User> searchByNameOrEmail(String search, Pageable pageable);
+
+    Page<User> findByRole(Role role, Pageable pageable);
+
+    Page<User> searchByNameOrEmailAndRole(String search, Role role, Pageable pageable);
 
 }

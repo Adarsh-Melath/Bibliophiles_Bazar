@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.backend.application.dto.AdminUserResponse;
+import com.backend.domain.model.Role;
 import com.backend.domain.model.User;
 import com.backend.domain.repository.UserRepository;
 
@@ -17,12 +18,18 @@ import lombok.RequiredArgsConstructor;
 public class AdminService {
     private final UserRepository userRepository;
 
-    public Page<AdminUserResponse> getUsers(String search, int page, int size) {
+    public Page<AdminUserResponse> getUsers(String search, String role, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
+        Role roleEnum = (role != null && !role.isBlank()) ? Role.valueOf(role) : null;
+
         Page<User> users;
-        if (search != null && !search.isBlank()) {
+        if (search != null && !search.isBlank() && roleEnum != null) {
+            users = userRepository.searchByNameOrEmailAndRole(search, roleEnum, pageable);
+        } else if (search != null && !search.isBlank()) {
             users = userRepository.searchByNameOrEmail(search, pageable);
+        } else if (roleEnum != null) {
+            users = userRepository.findByRole(roleEnum, pageable);
         } else {
             users = userRepository.findAll(pageable);
         }
