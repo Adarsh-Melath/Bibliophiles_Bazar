@@ -17,65 +17,73 @@ const data = [
 export default function SalesChart() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.5 }}
-      className="bg-offwhite border border-tan rounded-xl shadow-soft p-6 h-[400px] flex flex-col"
+      transition={{ delay: 0.3 }}
+      className="bg-white border border-shelf/10 rounded-2xl shadow-soft p-8 h-[450px] flex flex-col group"
     >
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-10">
         <div>
-          <h2 className="text-xl font-heading font-bold text-teal">Sales Overview</h2>
-          <p className="text-sm font-body text-teal/60 mt-1">Monthly revenue performance</p>
+          <h2 className="text-xl font-heading font-bold text-shelf">Market Performance</h2>
+          <p className="text-[10px] font-ui font-bold uppercase tracking-[0.2em] text-shelf/30 mt-1.5">Monthly revenue trends</p>
         </div>
-        <select className="bg-white border border-tan rounded-lg px-3 py-1.5 text-sm font-label text-teal focus:outline-none focus:ring-2 focus:ring-sage/50">
-          <option>Last 7 Months</option>
-          <option>This Year</option>
-          <option>Last Year</option>
-        </select>
+        <div className="relative">
+            <select className="bg-shelf/[0.03] border border-shelf/5 rounded-full px-5 py-2 text-[9px] font-ui font-bold uppercase tracking-widest text-shelf/60 appearance-none pr-10 hover:bg-white hover:border-burgundy/20 transition-all cursor-pointer outline-none">
+                <option>Last 7 Months</option>
+                <option>This Year</option>
+                <option>All Time</option>
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-shelf/20">
+                <svg width="8" height="5" viewBox="0 0 8 5" fill="none"><path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+        </div>
       </div>
 
-      <div className="flex-1 w-full">
+      <div className="flex-1 w-full relative">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#548C8C" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#548C8C" stopOpacity={0} />
+                <stop offset="5%" stopColor="#800020" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#800020" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#D7CCC8" opacity={0.5} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#2C1E11" opacity={0.03} />
             <XAxis
               dataKey="name"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#548C8C', fontSize: 12, fontFamily: 'Open Sans' }}
-              dy={10}
+              tick={{ fill: '#2C1E11', fontSize: 10, fontFamily: 'Montserrat', fontWeight: 600, opacity: 0.3 }}
+              dy={15}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#548C8C', fontSize: 12, fontFamily: 'Open Sans' }}
-              tickFormatter={(v) => `$${v}`}
+              tick={{ fill: '#2C1E11', fontSize: 10, fontFamily: 'Montserrat', fontWeight: 600, opacity: 0.3 }}
+              tickFormatter={(v) => `₹${v}`}
             />
             <Tooltip
+              cursor={{ stroke: '#800020', strokeWidth: 1, strokeDasharray: '4 4' }}
               contentStyle={{
-                backgroundColor: '#EFEBE9',
-                borderColor: '#D7CCC8',
-                borderRadius: '8px',
-                fontFamily: 'Open Sans',
-                color: '#548C8C',
-                boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)',
+                backgroundColor: '#FDFBF7',
+                border: '1px solid rgba(44,30,17,0.1)',
+                borderRadius: '4px',
+                fontFamily: 'Montserrat',
+                boxShadow: '0 10px 30px rgba(44,30,17,0.1)',
+                padding: '12px'
               }}
-              itemStyle={{ color: '#548C8C', fontWeight: 600 }}
+              itemStyle={{ color: '#800020', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase' }}
+              labelStyle={{ color: '#2C1E11', fontSize: '10px', fontWeight: 700, marginBottom: '4px', opacity: 0.4 }}
+              formatter={(v) => [`₹${v}`, 'Revenue']}
             />
             <Area
               type="monotone"
               dataKey="sales"
-              stroke="#548C8C"
+              stroke="#800020"
               strokeWidth={3}
               fillOpacity={1}
               fill="url(#colorSales)"
-              activeDot={{ r: 6, fill: '#9CAF88', stroke: '#fff', strokeWidth: 2 }}
+              activeDot={{ r: 5, fill: '#800020', stroke: '#fff', strokeWidth: 2, shadow: '0 0 10px rgba(128,0,32,0.4)' }}
             />
           </AreaChart>
         </ResponsiveContainer>

@@ -20,6 +20,11 @@ export const bookFormSchema = z.object({
     publishedDate: z.string().optional(),
 });
 
+export const vendorLoginSchema = z.object({
+    email: z.string().email('Professional email is required'),
+    password: z.string().min(6, 'Credential key must be at least 6 characters'),
+});
+
 export const vendorSignUpSchema = z.object({
     // Step 1 — Contact info
     name: z.string().min(2, 'Name must be at least 2 characters'),

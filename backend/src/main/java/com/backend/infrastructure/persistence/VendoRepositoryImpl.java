@@ -17,26 +17,33 @@ public class VendoRepositoryImpl implements VendorApplicationRepository {
 
     private final JpaVendorApplicationRepository jpa;
 
+    @Override
     public VendorApplication save(VendorApplication application) {
         return jpa.save(application);
     }
 
+    @Override
     public Optional<VendorApplication> findById(Long id) {
         return jpa.findById(id);
     }
 
+    @Override
     public List<VendorApplication> findAll() {
         return jpa.findAll();
     }
 
+    @Override
     public boolean existsByEmail(String email) {
         return jpa.existsByEmail(email);
     }
+
+    @Override
 
     public List<VendorApplication> findByStatus(ApplicationStatus status) {
         return jpa.findByStatus(status);
     }
 
+    @Override
     public Optional<VendorApplication> findByEmail(String email) {
         return jpa.findByEmail(email);
     }

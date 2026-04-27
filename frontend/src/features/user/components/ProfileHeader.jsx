@@ -17,7 +17,7 @@ export default function ProfileHeader({ onEdit }) {
 
   if (isLoading) {
     return (
-      <div className="h-48 bg-white rounded-2xl animate-pulse mb-8 border border-tan/20" />
+      <div className="h-48 bg-white rounded-2xl animate-pulse mb-8 border border-shelf/10" />
     );
   }
 

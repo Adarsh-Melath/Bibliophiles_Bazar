@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -46,6 +47,7 @@ public class VendorApplication {
     private String businessName;
 
     @Column(nullable = false)
+    @Size(max = 5000)
     private String businessDescription; // what they sell
 
     @Column(nullable = false)

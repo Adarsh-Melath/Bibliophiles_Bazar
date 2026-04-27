@@ -10,13 +10,11 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, Badge } from
 import { motion } from 'framer-motion'
 
 const STATS = [
-    { label: 'Total Curators', value: '3,842', change: '+12%', up: true, icon: Users },
-    { label: 'Manuscript Orders', value: '156', change: '-4%', up: false, icon: ShoppingCart },
-    { label: 'Archived Volumes', value: '1,248', change: '+8', up: true, icon: BookOpen },
-    { label: 'Guild Revenue', value: '$8,491', change: '+$1.2k', up: true, icon: DollarSign },
+    { label: 'Total Users', value: '3,842', change: '+12%', up: true, icon: Users },
+    { label: 'Total Orders', value: '156', change: '-4%', up: false, icon: ShoppingCart },
+    { label: 'Total Books', value: '1,248', change: '+8', up: true, icon: BookOpen },
+    { label: 'Total Sales', value: '$8,491', change: '+$1.2k', up: true, icon: DollarSign },
 ]
-
-// ... (Data Constants remain same for structure)
 
 const REVENUE_DATA = [
     { month: 'Jan', revenue: 3200 },
@@ -36,15 +34,15 @@ const ORDER_DATA = [
 ]
 
 const TOP_BOOKS = [
-    { title: 'The Shadow of the Wind', cover: 'https://images.unsplash.com/photo-1543004471-2401f3e1b854?auto=format&fit=crop&q=80&w=200', vendor: 'Heritage Guild', sales: 842, rating: 4.9 },
+    { title: 'The Shadow of the Wind', cover: 'https://images.unsplash.com/photo-1543004471-2401f3e1b854?auto=format&fit=crop&q=80&w=200', vendor: 'Heritage Group', sales: 842, rating: 4.9 },
     { title: 'Midnight Library', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=200', vendor: 'Curator Co.', sales: 756, rating: 4.8 },
-    { title: 'Old Man and the Sea', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=200', vendor: 'Archivists Inc.', sales: 612, rating: 4.7 },
+    { title: 'Old Man and the Sea', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=200', vendor: 'Books Inc.', sales: 612, rating: 4.7 },
 ]
 
 const VENDOR_ACTIVITY = [
-    { text: 'Master Curator "A. Vance" added 12 new volumes to the 19th-century collection.', time: '12 mins ago' },
-    { text: 'Guild Merchant "The Booksmith" processed an acquisition request for "The Odyssey".', time: '45 mins ago' },
-    { text: 'New merchant application received from "Labyrinthine Press".', time: '2 hours ago' },
+    { text: 'Admin "A. Vance" added 12 new books to the collection.', time: '12 mins ago' },
+    { text: 'Vendor "The Booksmith" accepted a request for "The Odyssey".', time: '45 mins ago' },
+    { text: 'New vendor application received from "Press Inc".', time: '2 hours ago' },
 ]
 
 const RECENT_ORDERS = [
@@ -55,10 +53,10 @@ const RECENT_ORDERS = [
 ]
 
 const STATUS_STYLES = {
-    Delivered: { variant: 'success', label: 'Archived' },
-    Pending: { variant: 'warning', label: 'In Review' },
-    Processing: { variant: 'info', label: 'Cataloging' },
-    Cancelled: { variant: 'error', label: 'Void' },
+    Delivered: { variant: 'success', label: 'Delivered' },
+    Pending: { variant: 'warning', label: 'Pending' },
+    Processing: { variant: 'info', label: 'Processing' },
+    Cancelled: { variant: 'error', label: 'Cancelled' },
 }
 
 export default function AdminDashboardPage() {
@@ -71,26 +69,22 @@ export default function AdminDashboardPage() {
             <div className="flex-1 flex flex-col min-w-0">
                 <AdminTopBar />
 
-                {/* Content */}
                 <main className="flex-1 p-10 overflow-y-auto space-y-10">
 
-                    {/* Welcoming Header */}
+                    {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between items-start gap-6 border-b border-shelf/5 pb-10">
                         <div>
-                            <span className="font-ui text-[10px] uppercase font-bold tracking-[0.4em] text-burgundy mb-3 block">Executive Overview</span>
+                            <span className="font-ui text-[10px] uppercase font-bold tracking-[0.4em] text-burgundy mb-3 block">Overview</span>
                             <h1 className="font-heading text-4xl md:text-5xl font-bold text-shelf tracking-tight">
-                                Greetings, Curator {user?.name?.split(' ')[0]}
+                                Welcome, {user?.name?.split(' ')[0]}
                             </h1>
                             <p className="font-body text-shelf/40 mt-3 text-base italic max-w-lg leading-relaxed">
-                                Reviewing the state of the Bibliophile repository and global trade logs.
+                                Monitor your store activity and sales.
                             </p>
                         </div>
-                        <button className="library-button-secondary px-8 py-4 text-[10px] whitespace-nowrap">
-                            Configure Dashboard
-                        </button>
                     </div>
 
-                    {/* Stat Ledger cards */}
+                    {/* Stats */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {STATS.map((stat, i) => (
                             <motion.div
@@ -118,14 +112,14 @@ export default function AdminDashboardPage() {
                         ))}
                     </div>
 
-                    {/* Charts Matrix */}
+                    {/* Charts */}
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         
                         {/* Area Chart: Orders */}
                         <Card className="p-0 overflow-hidden">
                             <CardHeader className="p-8 border-b border-shelf/5">
-                                <CardTitle>Order Manuscript Velocity</CardTitle>
-                                <CardDescription>Monthly cataloging frequency</CardDescription>
+                                <CardTitle>Orders</CardTitle>
+                                <CardDescription>Monthly order activity</CardDescription>
                             </CardHeader>
                             <CardContent className="p-8">
                                 <ResponsiveContainer width="100%" height={240}>
@@ -161,8 +155,8 @@ export default function AdminDashboardPage() {
                         {/* Bar Chart: Revenue */}
                         <Card className="p-0 overflow-hidden">
                             <CardHeader className="p-8 border-b border-shelf/5">
-                                <CardTitle>Treasury Growth</CardTitle>
-                                <CardDescription>Guild revenue accumulation</CardDescription>
+                                <CardTitle>Revenue</CardTitle>
+                                <CardDescription>Monthly sales growth</CardDescription>
                             </CardHeader>
                             <CardContent className="p-8">
                                 <ResponsiveContainer width="100%" height={240}>
@@ -194,20 +188,20 @@ export default function AdminDashboardPage() {
                     {/* Best Sellers & Activity */}
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         
-                        {/* Top Performers Table */}
+                        {/* Top Books Table */}
                         <Card className="p-0">
                             <CardHeader className="p-8 border-b border-shelf/5">
-                                <CardTitle>Manuscript Merit</CardTitle>
-                                <CardDescription>Top performing volumes by curation score</CardDescription>
+                                <CardTitle>Top Books</CardTitle>
+                                <CardDescription>Best selling books this month</CardDescription>
                             </CardHeader>
                             <CardContent className="p-8">
                                 <div className="overflow-x-auto">
                                     <table className="w-full">
                                         <thead>
                                             <tr className="border-b border-shelf/10">
-                                                <th className="text-left pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Volume</th>
-                                                <th className="text-right pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Archives</th>
-                                                <th className="text-right pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Status</th>
+                                                <th className="text-left pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Book</th>
+                                                <th className="text-right pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Sales</th>
+                                                <th className="text-right pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Rating</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-shelf/5">
@@ -216,7 +210,7 @@ export default function AdminDashboardPage() {
                                                     <td className="py-5">
                                                         <div className="flex items-center gap-4">
                                                             <div className="relative shrink-0">
-                                                                <img src={book.cover} alt={book.title}
+                                                                 <img src={book.cover} alt={book.title}
                                                                     className="w-9 h-12 object-cover rounded-sm shadow-sm group-hover:scale-110 transition-transform duration-500" />
                                                                 <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-sm" />
                                                             </div>
@@ -242,11 +236,11 @@ export default function AdminDashboardPage() {
                             </CardContent>
                         </Card>
 
-                        {/* Recent Activity Log */}
+                        {/* Recent Activity */}
                         <Card className="p-0">
                             <CardHeader className="p-8 border-b border-shelf/5">
-                                <CardTitle>Librarian's Log</CardTitle>
-                                <CardDescription>Global repository notifications</CardDescription>
+                                <CardTitle>Recent Activity</CardTitle>
+                                <CardDescription>Latest system updates</CardDescription>
                             </CardHeader>
                             <CardContent className="p-10 space-y-8">
                                 {VENDOR_ACTIVITY.map((item, i) => (
@@ -265,23 +259,23 @@ export default function AdminDashboardPage() {
                                 ))}
                                 <div className="pt-4 border-t border-shelf/5">
                                     <button className="font-ui text-[9px] uppercase font-bold tracking-[0.3em] text-burgundy hover:text-shelf transition-colors">
-                                        Access Full Archives →
+                                        View All Activity →
                                     </button>
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
 
-                    {/* Master Order Manifest */}
+                    {/* Recent Orders */}
                     <Card className="p-0 overflow-hidden" variant="elevated">
                         <CardHeader className="p-10 border-b border-shelf/5 bg-paper/50">
                             <div className="flex items-center justify-between gap-6">
                                 <div>
-                                    <CardTitle className="text-3xl">Trade Manifests</CardTitle>
-                                    <CardDescription>Recent cross-guild acquisitions and status</CardDescription>
+                                    <CardTitle className="text-3xl">Recent Orders</CardTitle>
+                                    <CardDescription>Recent customer purchases and status</CardDescription>
                                 </div>
                                 <button className="library-button-secondary py-3 px-6 text-[9px]">
-                                    Purge Logs
+                                    Clear Logs
                                 </button>
                             </div>
                         </CardHeader>
@@ -290,7 +284,7 @@ export default function AdminDashboardPage() {
                                 <table className="w-full border-collapse">
                                     <thead>
                                         <tr className="bg-shelf/5 border-b border-shelf/10">
-                                            {['Sequence', 'Curator', 'Manuscript', 'Archival Status', 'Appraisal'].map(h => (
+                                            {['ID', 'Customer', 'Book', 'Status', 'Total'].map(h => (
                                                 <th key={h} className="text-left px-8 py-4 font-ui text-[9px]
                                                                        font-bold text-shelf/40 uppercase tracking-[0.3em]">
                                                     {h}

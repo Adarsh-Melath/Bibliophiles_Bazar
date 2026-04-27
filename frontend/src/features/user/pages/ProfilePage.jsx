@@ -33,21 +33,21 @@ export default function ProfilePage() {
             <WishlistPreview />
           </motion.div>
         );
-      case 'addresses':
-        return (
-          <motion.div
-            key="addresses"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="library-panel p-12 flex flex-col items-center justify-center text-center min-h-[400px]"
-          >
-            <h2 className="font-heading font-bold text-3xl text-shelf mb-3">Saved Addresses</h2>
-            <p className="font-body text-shelf/60 max-w-sm">Manage your shipping and billing addresses for a faster checkout experience.</p>
-            <button className="library-button mt-8">Add New Address</button>
-          </motion.div>
-        );
+      // case 'addresses':
+      //   return (
+      //     <motion.div
+      //       key="addresses"
+      //       initial={{ opacity: 0, x: 20 }}
+      //       animate={{ opacity: 1, x: 0 }}
+      //       exit={{ opacity: 0, x: -20 }}
+      //       transition={{ duration: 0.3 }}
+      //       className="library-panel p-12 flex flex-col items-center justify-center text-center min-h-[400px]"
+      //     >
+      //       <h2 className="font-heading font-bold text-3xl text-shelf mb-3">Saved Addresses</h2>
+      //       <p className="font-body text-shelf/60 max-w-sm">Manage your shipping and billing addresses for a faster checkout experience.</p>
+      //       <button className="library-button mt-8">Add New Address</button>
+      //     </motion.div>
+      //   );
       default:
         return (
           <motion.div
