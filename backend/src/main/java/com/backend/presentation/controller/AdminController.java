@@ -25,9 +25,10 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<AdminUserResponse>> getUsers(
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) String role,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(adminService.getUsers(search, page, size));
+        return ResponseEntity.ok(adminService.getUsers(search, role, page, size));
     }
 
     @PutMapping("/users/{id}/toggle-block")
@@ -37,3 +38,4 @@ public class AdminController {
         return ResponseEntity.ok("User block status updated");
     }
 }
+ 

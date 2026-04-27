@@ -1,16 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../../lib/axios';
 
-export const useAdminUsers = ({ search, page, size }) =>
+export const useAdminUsers = ({ search, role, page, size }) =>
     useQuery({
-        queryKey: ['admin-users', search, page, size],
+        queryKey: ['admin-users', search, role, page, size],
         queryFn: () =>
             api
                 .get('/admin/users', {
-                    params: { search: search || undefined, page, size },
+                    params: {
+                        search: search || undefined,
+                        role: role || undefined,
+                        page,
+                        size,
+                    },
                 })
                 .then((r) => r.data),
     });
+
 
 export const useToggleBlock = () => {
     const qc = useQueryClient();
