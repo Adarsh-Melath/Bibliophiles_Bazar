@@ -54,106 +54,115 @@ export default function OtpModal({ email, onVerified, onClose }) {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 bg-shelf/40 backdrop-blur-[2px] flex items-center justify-center z-[100] px-4">
+            <div className="fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-[100] px-4">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="library-panel bg-paper w-full max-w-sm relative p-0 overflow-hidden shadow-shelf"
+                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                    transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                    className="editorial-card w-full max-w-md relative !p-0 overflow-hidden shadow-2xl shadow-ink/40 bg-paper"
                 >
                     {/* Archival Header Decoration */}
-                    <div className="h-1.5 w-full bg-gradient-to-r from-burgundy via-shelf to-burgundy" />
+                    <div className="h-1.5 w-full bg-ink" />
 
-                    <div className="p-8">
+                    <div className="p-10 md:p-12">
                         {/* Close Button */}
                         <button
                             onClick={onClose}
                             disabled={isPending}
-                            className="absolute top-6 right-6 text-shelf/30 hover:text-burgundy transition-all duration-300"
+                            className="absolute top-8 right-8 text-ink/20 hover:text-gold transition-all duration-500"
                         >
-                            <X size={20} />
+                            <X size={22} />
                         </button>
 
                         {/* Icon/Identity Header */}
-                        <div className="w-14 h-14 rounded-sm bg-shelf/5 flex items-center justify-center mb-4 border border-shelf/5 shadow-inner">
-                            <Mail size={24} className="text-burgundy" />
+                        <div className="w-16 h-16 rounded-full bg-ink/[0.03] border border-ink/[0.05] flex items-center justify-center mb-8 shadow-inner">
+                            <Mail size={28} className="text-gold" />
                         </div>
-                        <span className="font-ui text-[10px] uppercase font-bold tracking-[0.4em] text-burgundy mb-2">Verification Required</span>
-                        <h3 className="font-heading text-2xl font-bold text-shelf tracking-tight">
-                            Registry Audit
-                        </h3>
-                        <div className="mt-2 p-3 bg-shelf/[0.02] border border-shelf/5 rounded-sm w-full">
-                            <p className="font-body text-[11px] text-shelf/40 italic leading-relaxed">
-                                A 6-digit access sequence has been dispatched to:
-                                <span className="block text-shelf font-medium not-italic mt-1 break-all">{email}</span>
+                        
+                        <div className="space-y-2 mb-10">
+                            <span className="font-ui text-[10px] uppercase font-bold tracking-[0.5em] text-gold block">Identity Audit</span>
+                            <h3 className="text-4xl font-bold text-ink tracking-tighter">
+                                Verification Required
+                            </h3>
+                        </div>
+
+                        <div className="mb-10 p-6 bg-ink/[0.02] border border-ink/[0.05] rounded-sm">
+                            <p className="font-ui text-[11px] text-ink/40 uppercase tracking-widest font-bold leading-relaxed">
+                                A 6-digit access sequence has been dispatched to your registry:
+                                <span className="block text-ink font-bold not-italic mt-2 break-all text-sm">{email}</span>
                             </p>
                         </div>
-                    </div>
 
-                    {/* Error Handling */}
-                    {error && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className="bg-burgundy/5 border-l-4 border-burgundy text-burgundy text-[10px] font-bold uppercase tracking-widest px-6 py-4 mb-6"
-                        >
-                            {error.response?.data?.error || 'Authorization Sequence Failed'}
-                        </motion.div>
-                    )}
-
-                    {/* OTP Input Registry */}
-                    <div className="flex justify-between gap-3 mb-6" onPaste={handlePaste}>
-                        {otp.map((digit, i) => (
-                            <input
-                                key={i}
-                                ref={el => inputs.current[i] = el}
-                                type="text"
-                                inputMode="numeric"
-                                maxLength={1}
-                                value={digit}
-                                onChange={e => handleChange(e.target.value, i)}
-                                onKeyDown={e => handleKeyDown(e, i)}
-                                className="w-full aspect-[4/5] bg-transparent border-b-2 
-                                               text-center text-3xl font-heading font-bold
-                                               border-shelf/10 text-shelf
-                                               focus:outline-none focus:border-burgundy
-                                               transition-all duration-300 placeholder:text-shelf/10"
-                                placeholder="0"
-                            />
-                        ))}
-                    </div>
-
-                    {/* Dynamic Progress/Action Button */}
-                    <button
-                        onClick={() => verify({ email, code: otpValue })}
-                        disabled={isPending || otpValue.length !== 6}
-                        className="w-full library-button bg-shelf text-paper py-4 rounded-sm shadow-shelf 
-                                       flex items-center justify-center gap-3 group disabled:opacity-30 disabled:grayscale transition-all duration-500"
-                    >
-                        <ShieldCheck size={18} className="group-hover:text-burgundy transition-colors" />
-                        <span className="text-[11px] uppercase tracking-[0.3em] font-bold">
-                            {isPending ? 'Validating Sequence...' : 'Authorize Access'}
-                        </span>
-                    </button>
-
-                    {/* Resend Protocol */}
-                    <div className="mt-6 text-center">
-                        {countdown > 0 ? (
-                            <div className="flex items-center justify-center gap-3 text-shelf/40 font-ui text-[10px] uppercase font-bold tracking-widest">
-                                <Timer size={14} className="animate-spin-slow" />
-                                <span>Protocol refresh in {countdown}s</span>
-                            </div>
-                        ) : (
-                            <button
-                                onClick={() => resend()}
-                                disabled={isResending}
-                                className="text-burgundy font-ui text-[10px] uppercase font-bold tracking-[0.25em] 
-                                               flex items-center justify-center gap-2 mx-auto hover:text-shelf transition-colors group"
+                        {/* Error Handling */}
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="bg-velvet/5 border border-velvet/10 text-velvet text-[10px] font-bold uppercase tracking-widest px-6 py-4 mb-8 text-center"
                             >
-                                <RotateCcw size={14} className="group-hover:rotate-180 transition-transform duration-700" />
-                                {isResending ? 'Redispatching...' : 'Request New Sequence'}
-                            </button>
+                                {error.response?.data?.error || 'Authorization Sequence Failed'}
+                            </motion.div>
                         )}
+
+                        {/* OTP Input Registry */}
+                        <div className="flex justify-between gap-4 mb-10" onPaste={handlePaste}>
+                            {otp.map((digit, i) => (
+                                <input
+                                    key={i}
+                                    ref={el => inputs.current[i] = el}
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={1}
+                                    value={digit}
+                                    onChange={e => handleChange(e.target.value, i)}
+                                    onKeyDown={e => handleKeyDown(e, i)}
+                                    className="w-full aspect-[4/5] bg-transparent border-b-2 
+                                                   text-center text-4xl font-heading font-bold
+                                                   border-ink/10 text-ink
+                                                   focus:outline-none focus:border-gold
+                                                   transition-all duration-500 placeholder:text-ink/5"
+                                    placeholder="0"
+                                />
+                            ))}
+                        </div>
+
+                        {/* Dynamic Progress/Action Button */}
+                        <button
+                            onClick={() => verify({ email, code: otpValue })}
+                            disabled={isPending || otpValue.length !== 6}
+                            className="w-full py-5 bg-ink text-white font-ui font-bold uppercase tracking-[0.4em] text-[11px] hover:bg-gold transition-all duration-700 shadow-2xl shadow-ink/20 disabled:opacity-20 disabled:grayscale group"
+                        >
+                            <span className="relative z-10 flex items-center justify-center gap-3">
+                                <ShieldCheck size={18} className="group-hover:scale-110 transition-transform" />
+                                {isPending ? 'Validating Sequence...' : 'Authorize Access'}
+                            </span>
+                        </button>
+
+                        {/* Resend Protocol */}
+                        <div className="mt-10 text-center">
+                            {countdown > 0 ? (
+                                <div className="flex items-center justify-center gap-3 text-ink/20 font-ui text-[9px] uppercase font-bold tracking-[0.3em]">
+                                    <Timer size={14} className="animate-spin-slow" />
+                                    <span>Sequence refresh in {countdown}s</span>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => resend()}
+                                    disabled={isResending}
+                                    className="text-gold font-ui text-[10px] uppercase font-bold tracking-[0.3em] 
+                                                   flex items-center justify-center gap-2 mx-auto hover:text-ink transition-all duration-500 group"
+                                >
+                                    <RotateCcw size={14} className="group-hover:rotate-180 transition-transform duration-1000" />
+                                    {isResending ? 'Redispatching...' : 'Request New Sequence'}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* Bottom Aesthetic Accent */}
+                    <div className="bg-ink/[0.02] py-4 border-t border-ink/[0.05] text-center">
+                        <p className="text-[8px] uppercase tracking-[0.5em] font-bold text-ink/10">Archive Security Protocol v2.4</p>
                     </div>
                 </motion.div>
             </div>

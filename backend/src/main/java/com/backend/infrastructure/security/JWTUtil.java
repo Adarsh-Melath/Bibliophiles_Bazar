@@ -11,7 +11,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class JWTUtil {
+public class JWTUtil implements com.backend.application.ports.JWTUtil {
 
     @Value("${app.jwt.secret}")
     private String secret;

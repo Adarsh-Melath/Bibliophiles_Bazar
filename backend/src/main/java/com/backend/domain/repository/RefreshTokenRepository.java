@@ -9,5 +9,7 @@ public interface RefreshTokenRepository {
 
     Optional<RefreshToken> findByToken(String token);
 
+    void delete(RefreshToken token);
+
     void deleteByEmail(String email);
 }

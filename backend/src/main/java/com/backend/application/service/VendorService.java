@@ -11,16 +11,15 @@ import org.springframework.stereotype.Service;
 import com.backend.application.dto.VendorApplicationRequest;
 import com.backend.application.dto.VendorApplicationResponse;
 import com.backend.domain.model.ApplicationStatus;
-import com.backend.domain.model.AuthProvider;
-import com.backend.domain.model.Role;
 import com.backend.domain.model.User;
 import com.backend.domain.model.VendorApplication;
 import com.backend.domain.repository.UserRepository;
 import com.backend.domain.repository.VendorApplicationRepository;
-import com.backend.infrastructure.email.EmailService;
+import com.backend.application.ports.EmailService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import com.backend.domain.model.Role;
 
 @Service
 @RequiredArgsConstructor
@@ -36,18 +35,23 @@ public class VendorService {
         }
         if (userRepository.existsByEmail(request.getEmail()))
             throw new RuntimeException("User with this email already exists");
+        // LocalDateTime reviewedAt
 
-        VendorApplication application = new VendorApplication();
-
-        application.setName(request.getName());
-        application.setEmail(request.getEmail());
-        application.setPhone(request.getPhone());
-        application.setBusinessName(request.getBusinessName());
-        application.setBusinessDescription(request.getBusinessDescription());
-        application.setCategory(request.getCategory());
-        application.setBusinessRegistrationNumber(request.getBusinessRegistrationNumber());
-        application.setWebsite(request.getWebsite());
-        application.setPublishingSince(request.getPublishingSince());
+        VendorApplication application = new VendorApplication(
+                null,
+                request.getName(),
+                request.getEmail(),
+                request.getPhone(),
+                request.getBusinessRegistrationNumber(),
+                request.getWebsite(),
+                request.getPublishingSince(),
+                request.getBusinessName(),
+                request.getBusinessDescription(),
+                request.getCategory(),
+                ApplicationStatus.PENDING,
+                null,
+                LocalDateTime.now(),
+                null);
 
         vendorApplicationRepository.save(application);
 
@@ -59,21 +63,15 @@ public class VendorService {
         VendorApplication application = vendorApplicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        application.setStatus(ApplicationStatus.APPROVED);
-        application.setReviewedAt(LocalDateTime.now());
+        application.changeStatus(ApplicationStatus.APPROVED);
+
         vendorApplicationRepository.save(application);
 
-        User vendor = new User();
-
-        vendor.setName(application.getName());
-        vendor.setEmail(application.getEmail());
-        vendor.setPhone(application.getPhone());
-        vendor.setRole(Role.VENDOR);
-        vendor.setEnabled(true);
-        vendor.setProvider(AuthProvider.LOCAL);
+        User vendor = new User(
+                false, application.getEmail(), true, null, application.getName(), null, application.getPhone(), null,Role.VENDOR);
 
         String tempPassword = UUID.randomUUID().toString().substring(0, 8);
-        vendor.setPassword(passwordEncoder.encode(tempPassword));
+        vendor.changePassword(passwordEncoder.encode(tempPassword));
         userRepository.save(vendor);
 
         emailService.sendVendorApprovalEmail(application.getName(), application.getEmail(), tempPassword);
@@ -83,9 +81,8 @@ public class VendorService {
         VendorApplication application = vendorApplicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        application.setStatus(ApplicationStatus.REJECTED);
-        application.setRejectionReason(reason);
-        application.setReviewedAt(LocalDateTime.now());
+        application.changeStatus(ApplicationStatus.REJECTED);
+        application.addRejectReason(reason);
         vendorApplicationRepository.save(application);
 
         emailService.sendVendorRejectionEmail(application.getName(), application.getEmail(), reason);
@@ -107,6 +104,12 @@ public class VendorService {
             responses.add(toVendorApplicationResponse(application));
         }
         return responses;
+    }
+
+    public VendorApplicationResponse getByEmail(String email) {
+        VendorApplication application = vendorApplicationRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+        return toVendorApplicationResponse(application);
     }
 
     public VendorApplicationResponse toVendorApplicationResponse(VendorApplication application) {

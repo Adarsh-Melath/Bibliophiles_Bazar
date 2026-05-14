@@ -39,17 +39,16 @@ export const addressFormSchema = z.object({
     isDefault: z.boolean().default(false),
 });
 
-//image validation
+export const editProfileSchema = z.object({
+    name: z.string().min(2, 'Name must be at least 2 characters'),
+    phone: z
+        .string()
+        .regex(/^[0-9]{10}$/, 'Phone must be 10 digits')
+        .or(z.literal('')),
+    // Image is handled separately outside the schema (file input + preview state)
+});
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const MIN_DIMENSIONS = { width: 200, height: 200 };
-const MAX_DIMENSIONS = { width: 4096, height: 4096 };
-const ACCEPTED_IMAGE_TYPES = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/webp',
-];
+//image validation
 
 const formatBytes = (bytes, decimal = 2) => {
     if (bytes === 0) return '0 bytes';
@@ -64,11 +63,3 @@ const formatBytes = (bytes, decimal = 2) => {
         sizes[i]
     );
 };
-export const editProfileSchema = z.object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    phone: z
-        .string()
-        .regex(/^[0-9]{10}$/, 'Phone must be 10 digits')
-        .or(z.literal('')),
-    // Image is handled separately outside the schema (file input + preview state)
-});

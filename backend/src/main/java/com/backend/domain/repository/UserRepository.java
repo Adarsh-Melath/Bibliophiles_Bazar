@@ -2,11 +2,10 @@
 package com.backend.domain.repository;
 
 import com.backend.domain.model.User;
+import com.backend.domain.model.pagination.PageQuery;
+import com.backend.domain.model.pagination.PageResult;
 
 import java.util.Optional;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import com.backend.domain.model.Role;
 
@@ -20,12 +19,11 @@ public interface UserRepository {
 
     boolean existsByEmail(String email);
 
-    Page<User> findAll(Pageable pageable);
+    PageResult<User> findAll(PageQuery query);
 
-    Page<User> searchByNameOrEmail(String search, Pageable pageable);
+    PageResult<User> searchByNameOrEmail(String search, PageQuery pageable);
 
-    Page<User> findByRole(Role role, Pageable pageable);
+    PageResult<User> findByRole(Role role, PageQuery pageable);
 
-    Page<User> searchByNameOrEmailAndRole(String search, Role role, Pageable pageable);
-
+    PageResult<User> searchByNameOrEmailAndRole(String search, Role role, PageQuery pageable);
 }

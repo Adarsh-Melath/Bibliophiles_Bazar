@@ -2,33 +2,59 @@ package com.backend.domain.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
+public final class OTPToken {
 
-@Data
-@Entity
-@Table(name = "otp_tokens")
-public class OTPToken {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String code;
 
-    @Column(nullable = false)
     private LocalDateTime expiresAt;
 
     private String resetToken;
+
+    // All-args constructor
+    public OTPToken(
+            Long id,
+            String email,
+            String code,
+            LocalDateTime expiresAt,
+            String resetToken) {
+        this.id = id;
+        this.email = email;
+        this.code = code;
+        this.expiresAt = expiresAt;
+        this.resetToken = resetToken;
+    }
+
+    public void  generateResetToken(String resetToken){
+        this.resetToken=resetToken;
+    }
+
+    // Getters
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    // Business method
 
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiresAt);

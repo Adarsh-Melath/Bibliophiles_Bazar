@@ -1,50 +1,88 @@
 package com.backend.domain.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.Data;
-
-@Data
-@Entity
-@Table(name = "addresses")
 public class Address {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Column(nullable = false)
+    private Long userId;
     private String fullName;
-
-    @Column(nullable = false)
     private String phone;
-
-    @Column(nullable = false)
     private String addressLine;
-
-    @Column(nullable = false)
     private String city;
-
-    @Column(nullable = false)
     private String state;
-
-    @Column(nullable = false)
     private String pincode;
-
     private boolean isDefault = false;
-
     private String addressLine2;
     private String country;
-    private String addressType; // HOME, WORK, OTHER
+    private String addressType;
+
+    public Address(Long id, Long userId, String fullName, String phone, String addressLine, String city, String state,
+            String pincode, boolean isDefault, String addressLine2, String country, String addressType) {
+        this.id = id;
+        this.userId = userId;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.addressLine = addressLine;
+        this.city = city;
+        this.state = state;
+        this.pincode = pincode;
+        this.isDefault = isDefault;
+        this.addressLine2 = addressLine2;
+        this.country = country;
+        this.addressType = addressType;
+    }
+
+    public void markAsDefault() {
+        this.isDefault = true;
+    }
+
+    public void unmarkAsDefault() {
+        this.isDefault = false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getAddressLine() {
+        return addressLine;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getPincode() {
+        return pincode;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public String getAddressLine2() {
+        return addressLine2;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getAddressType() {
+        return addressType;
+    }
 }

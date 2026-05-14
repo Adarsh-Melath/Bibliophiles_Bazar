@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
-import { BookOpen, Building2, ChevronRight, ChevronLeft, CheckCircle, ShieldCheck, XCircle } from 'lucide-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { BookOpen, Building2, ChevronRight, CheckCircle, ShieldCheck, XCircle } from 'lucide-react'
 import api from '../../../lib/axios'
 import { vendorSignUpSchema } from '../schemas/vendorSchemas'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -20,8 +20,7 @@ export default function VendorApplyPage() {
   const [step, setStep] = useState(1)
   const [submitted, setSubmitted] = useState(false)
   const navigate = useNavigate()
-  const [status, setStatus] = useState('pending'); // 'pending' // 'approved' //rejected
-
+  const [status, setStatus] = useState('pending')
 
   const {
     register,
@@ -30,17 +29,50 @@ export default function VendorApplyPage() {
     formState: { errors },
   } = useForm({ resolver: zodResolver(vendorSignUpSchema) })
 
-  const { mutate: apply, isPending, error } = useMutation({
+  const { mutate: apply, isPending } = useMutation({
     mutationFn: (data) => api.post('/vendor/apply', data),
-    onSuccess: () => setSubmitted(true),
+    onSuccess: () => {
+      setSubmitted(true)
+    },
   })
+
+  // Check application status after submission with polling
+  const { data: applicationStatus } = useQuery({
+    queryKey: ['vendor-application-status'],
+    queryFn: async () => {
+      const email = localStorage.getItem('vendor-application-email')
+      console.log('Fetching status for email:', email)
+      const response = await api.get(`/vendor/application?email=${encodeURIComponent(email || '')}`)
+      console.log('Application status response:', response.data)
+      return response.data
+    },
+    enabled: submitted, // Auto-fetch when submitted
+    refetchInterval: (query) => {
+      // Poll every 5 seconds if status is still pending
+      const currentStatus = query?.state?.data?.status
+      console.log('Current status for polling:', currentStatus)
+      return currentStatus === 'PENDING' ? 5000 : false
+    },
+  })
+
+  // Update status when application data changes
+  useEffect(() => {
+    if (applicationStatus) {
+      console.log('Updating status to:', applicationStatus.status)
+      setStatus(applicationStatus.status.toLowerCase())
+    }
+  }, [applicationStatus])
 
   const handleNext = async () => {
     const valid = await trigger(STEP1_FIELDS)
     if (valid) setStep(2)
   }
 
-  const onSubmit = (data) => apply(data)
+  const onSubmit = (data) => {
+    // Store email in localStorage for later use
+    localStorage.setItem('vendor-application-email', data.email)
+    apply(data)
+  }
 
   if (submitted) {
     return (
@@ -86,16 +118,23 @@ export default function VendorApplyPage() {
             {status === 'rejected' && (
               <div className="mt-4 p-3 bg-red-50/50 border border-red-100 rounded-sm">
                 <p className="text-[10px] font-ui font-bold uppercase text-red-800 tracking-widest mb-1">Reason for Rejection</p>
-                <p className="text-[11px] font-body text-red-600 italic">"The provided business documentation was insufficient for our verification process."</p>
+                <p className="text-[11px] font-body text-red-600 italic">
+                  {applicationStatus?.rejectionReason || "No specific reason provided."}
+                </p>
               </div>
             )}
           </div>
 
           <div className="pt-2">
             {status === 'pending' && (
-              <button disabled className="w-full library-button py-3 text-[9px] opacity-50 cursor-not-allowed bg-shelf">
-                Awaiting Verification...
-              </button>
+              <div className="space-y-2">
+                <button disabled className="w-full library-button py-3 text-[9px] opacity-50 cursor-not-allowed bg-shelf">
+                  Awaiting Verification...
+                </button>
+                <p className="text-[8px] text-shelf/40 text-center italic">
+                  Checking status... (Current: {applicationStatus?.status || 'Loading'})
+                </p>
+              </div>
             )}
             {status === 'approved' && (
               <button

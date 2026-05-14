@@ -15,61 +15,69 @@ export function AddressCard({
   onDelete,
   onSetPrimary
 }) {
-
-  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      whileHover={{ y: -4, shadow: '0 10px 25px -5px rgba(44, 30, 17, 0.05)' }}
-      className={`relative bg-white rounded-sm p-8 border transition-all duration-300 group selection:bg-burgundy/10 ${isDefault ? 'border-burgundy shadow-shelf' : 'border-shelf/5 hover:border-shelf/20'
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.19, 1, 0.22, 1] }}
+      whileHover={{ y: -6 }}
+      className={`relative bg-white/70 backdrop-blur-md p-10 border transition-all duration-700 group selection:bg-gold/10 ${isDefault ? 'border-gold shadow-2xl shadow-gold/10' : 'border-ink/[0.05] hover:border-gold/30 hover:bg-white'
         }`}
     >
       {isDefault && (
-        <div className="absolute top-0 right-0 bg-burgundy text-paper text-[9px] font-bold uppercase tracking-[0.2em] py-1.5 px-4">
-          Main Address
+        <div className="absolute top-0 right-0 bg-gold text-white text-[9px] font-bold uppercase tracking-[0.3em] py-2 px-6">
+          Primary
         </div>
       )}
 
-      <div className="mb-6 pr-10">
-        <div className="flex items-center gap-3 mb-4">
-          <div className={`p-2 rounded-sm ${isDefault ? 'bg-burgundy/10 text-burgundy' : 'bg-shelf/5 text-shelf/40'}`}>
-            <MapPin size={16} />
+      <div className="mb-10 pr-12">
+        <div className="flex items-center gap-5 mb-6">
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-700 ${isDefault ? 'bg-gold text-white shadow-xl shadow-gold/20' : 'bg-ink/[0.03] text-ink/20 group-hover:bg-gold/10 group-hover:text-gold'}`}>
+            <MapPin size={20} />
           </div>
-          <h3 className="font-heading font-bold text-shelf text-xl">
+          <h3 className="text-2xl font-bold text-ink tracking-tight group-hover:text-gold transition-colors duration-500">
             {name}
           </h3>
         </div>
 
-        <p className="font-ui text-[10px] font-bold text-shelf/40 mb-4 uppercase tracking-widest px-1 border-l-2 border-shelf/5">
+        <p className="text-[11px] font-bold text-ink/30 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
+          <span className="w-6 h-[1px] bg-ink/10" />
           {phone}
         </p>
 
-        <div className="font-body text-sm text-shelf/60 leading-relaxed space-y-1">
-          <p className="italic">{addressLines}</p>
-          <p>{cityStatePin}</p>
-          <p className="font-bold uppercase tracking-widest text-[10px] opacity-30 pt-1">{country}</p>
+        <div className="text-base text-ink/60 leading-relaxed space-y-2">
+          <p className="italic font-heading text-xl">"{addressLines}"</p>
+          <p className="font-ui text-[11px] uppercase tracking-widest font-bold opacity-40">{cityStatePin}</p>
+          <p className="font-bold uppercase tracking-[0.4em] text-[9px] text-gold pt-2">{country}</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-6 pt-6 border-t border-shelf/5 mt-auto">
-        <button onClick={()=>onEdit(id)} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-shelf/40 hover:text-burgundy transition-all group/btn">
-          <Pencil size={12} className="group-hover/btn:scale-110 transition-transform" />
-          Edit
+      <div className="flex items-center gap-8 pt-8 border-t border-ink/[0.05] mt-auto">
+        <button 
+          onClick={()=>onEdit(id)} 
+          className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-ink/30 hover:text-ink transition-all duration-500 group/btn"
+        >
+          <Pencil size={14} className="group-hover/btn:scale-110 transition-transform duration-500" />
+          Edit Registry
         </button>
-        <button onClick={()=>onDelete(id)} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-shelf/40 hover:text-burgundy transition-all group/btn">
-          <Trash2 size={12} className="group-hover/btn:scale-110 transition-transform" />
+        <button 
+          onClick={()=>onDelete(id)} 
+          className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-ink/30 hover:text-velvet transition-all duration-500 group/btn"
+        >
+          <Trash2 size={14} className="group-hover/btn:scale-110 transition-transform duration-500" />
           Remove
         </button>
 
         {!isDefault && (
-          <button onClick={()=>onSetPrimary(id)} className="ml-auto flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-shelf/30 hover:text-burgundy transition-all">
-            <Check size={12} />
+          <button 
+            onClick={()=>onSetPrimary(id)} 
+            className="ml-auto flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-gold hover:text-ink transition-all duration-500"
+          >
+            <Check size={14} />
             Set Primary
           </button>
         )}
       </div>
     </motion.div>
   );
-}
+}

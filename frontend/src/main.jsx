@@ -6,17 +6,27 @@ import { AnimatePresence } from "framer-motion";
 import router from "./router";
 import "./index.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      retry: 1,
+    }
+  }
+});
 
 function AppProviders() {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <AnimatePresence mode="wait">
-          <RouterProvider router={router} />
-        </AnimatePresence>
-      </QueryClientProvider>
-    </React.StrictMode>
+    // <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <AnimatePresence mode="wait">
+        <RouterProvider router={router} />
+      </AnimatePresence>
+    </QueryClientProvider>
+    // </React.StrictMode>
   );
 }
 

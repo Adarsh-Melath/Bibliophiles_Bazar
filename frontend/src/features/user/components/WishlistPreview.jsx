@@ -80,7 +80,7 @@ export default function WishlistPreview() {
             {/* Actions */}
             <div className="mt-4 flex gap-2">
               <button className="flex-grow library-button text-[10px] py-3 rounded">
-                <ShoppingCart size={14} className="mr-1" /> Add
+                <ShoppingCart size={14} className="mr-1" /> Add to cart
               </button>
               <button className="p-3 border border-shelf/10 text-shelf/40 hover:text-burgundy hover:border-burgundy/20 rounded transition-all">
                 <Trash2 size={16} />

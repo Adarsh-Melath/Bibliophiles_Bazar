@@ -2,6 +2,7 @@ package com.backend.application.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,9 @@ import com.backend.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import jakarta.annotation.PostConstruct;
+import javax.sql.DataSource;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -28,6 +32,14 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
     private final StorageService storageService;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @PostConstruct
+    public void printDbInfo() throws Exception {
+        log.debug("Connected db : {}", dataSource.getConnection().getMetaData().getURL());
+    }
 
     public UserDto getProfile(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
@@ -44,10 +56,10 @@ public class UserService {
         }
 
         if (request.getPhone() != null) {
-            user.setPhone(request.getPhone());
+            user.changePhone(request.getPhone());
         }
-        user.setName(request.getName());
-        user.setProfileImage(request.getProfileImage());
+        user.changeName(request.getName());
+        user.changeProfileImage(request.getProfileImage());
         userRepository.save(user);
         return toDto(user);
     }
@@ -63,7 +75,7 @@ public class UserService {
 
         String key = "profiles/" + user.getId() + "-" + System.currentTimeMillis();
         String url = storageService.uploadFile(file, key);
-        user.setProfileImage(url);
+        user.changeProfileImage(url);
         userRepository.save(user);
         return url;
     }
@@ -75,7 +87,7 @@ public class UserService {
             throw new RuntimeException("Current Password is incorrect ");
         }
 
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.changePassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
 
@@ -96,23 +108,24 @@ public class UserService {
             log.debug("isDefault in if condition of addAddress Method");
             List<Address> userAddresses = addressRepository.findByUserId(user.getId());
             for (Address addr : userAddresses) {
-                addr.setDefault(false);
+                addr.unmarkAsDefault();
                 addressRepository.save(addr);
             }
         }
 
-        Address address = new Address();
-        address.setUser(user);
-        address.setFullName(request.getFullName());
-        address.setPhone(request.getPhone());
-        address.setAddressLine(request.getAddressLine());
-        address.setCity(request.getCity());
-        address.setState(request.getState());
-        address.setPincode(request.getPincode());
-        address.setDefault(request.isDefault());
-        address.setAddressLine2(request.getAddressLine2());
-        address.setCountry(request.getCountry());
-        address.setAddressType(request.getAddressType());
+        Address address = new Address(
+                null,
+                user.getId(),
+                request.getFullName(),
+                request.getPhone(),
+                request.getAddressLine(),
+                request.getCity(),
+                request.getState(),
+                request.getPincode(),
+                request.isDefault(),
+                request.getAddressLine2(),
+                request.getCountry(),
+                request.getAddressType());
 
         Address saved = addressRepository.save(address);
         log.debug("isDefault value after saved in addmethod method" + saved.isDefault());
@@ -132,22 +145,26 @@ public class UserService {
             List<Address> userAddresses = addressRepository.findByUserId(user.getId());
             for (Address addr : userAddresses) {
                 if (!addr.getId().equals(id)) {
-                    addr.setDefault(false);
+                    addr.unmarkAsDefault();
                     addressRepository.save(addr);
                 }
             }
         }
+        address = new Address(
+                address.getId(),
+                user.getId(),
+                request.getFullName(),
+                request.getPhone(),
+                request.getAddressLine(),
+                request.getCity(),
+                request.getState(),
+                request.getPincode(),
+                request.isDefault(),
+                request.getAddressLine2(),
+                request.getCountry(),
+                request.getAddressType()
 
-        address.setFullName(request.getFullName());
-        address.setPhone(request.getPhone());
-        address.setAddressLine(request.getAddressLine());
-        address.setCity(request.getCity());
-        address.setState(request.getState());
-        address.setPincode(request.getPincode());
-        address.setDefault(request.isDefault());
-        address.setAddressLine2(request.getAddressLine2());
-        address.setCountry(request.getCountry());
-        address.setAddressType(request.getAddressType());
+        );
 
         Address saved = addressRepository.save(address);
         log.debug("isDefault value after saved in updateAddress method" + saved.isDefault());
@@ -165,8 +182,8 @@ public class UserService {
     }
 
     private UserDto toDto(User user) {
-        return new UserDto(user.getId(), user.getName(), user.getEmail(), user.getRole().name(),
-                user.getProfileImage(), user.getPhone());
+        return new UserDto(user.getId(), user.getName(), user.getEmail(), user.getRole().name(), user.getProfileImage(),
+                user.getPhone());
     }
 
     private AddressResponse toAddressResponse(Address address) {

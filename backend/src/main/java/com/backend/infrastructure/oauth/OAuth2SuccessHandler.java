@@ -11,18 +11,19 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.backend.application.ports.JWTUtil;
 import com.backend.domain.model.AuthProvider;
 import com.backend.domain.model.RefreshToken;
 import com.backend.domain.model.Role;
 import com.backend.domain.model.User;
 import com.backend.domain.repository.RefreshTokenRepository;
 import com.backend.domain.repository.UserRepository;
-import com.backend.infrastructure.security.JWTUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import com.backend.domain.model.Role;
 
 @Component
 @RequiredArgsConstructor
@@ -45,14 +46,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     String profileImage = oAuth2User.getAttribute("picture");
 
     User user = userRepository.findByEmail(email).orElseGet(() -> {
-      User newUser = new User();
-
-      newUser.setEmail(email);
-      newUser.setName(name);
-      newUser.setProfileImage(profileImage);
-      newUser.setProvider(AuthProvider.GOOGLE);
-      newUser.setRole(Role.USER);
-      newUser.setEnabled(true); // Google already verified the email
+      User newUser = new User( 
+          false,
+          email,
+          true,
+          null,
+          name,
+          null,
+          null,
+          profileImage,Role.USER);
 
       return userRepository.save(newUser);
     });
@@ -60,7 +62,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     String refreshToken = generateRefreshToken(email);
     ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
         .httpOnly(true)
-        .path("/api/auth/refresh")
+        .path("/api")
         .maxAge(7 * 24 * 60 * 60)
         .sameSite("Lax")
         .build();
@@ -76,11 +78,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
   }
 
   public String generateRefreshToken(String email) {
-    refreshTokenRepository.deleteByEmail(email);
-    RefreshToken token = new RefreshToken();
-    token.setToken(UUID.randomUUID().toString());
-    token.setEmail(email);
-    token.setExpiresAt(LocalDateTime.now().plusDays(7));
+    // Don't delete existing tokens - allow multiple refresh tokens per user
+    // This prevents issues when users have multiple tabs or sessions
+    RefreshToken token = new RefreshToken(
+        null,
+        UUID.randomUUID().toString(),
+        email,
+        LocalDateTime.now().plusDays(7));
+
     return refreshTokenRepository.save(token).getToken();
   }
 }

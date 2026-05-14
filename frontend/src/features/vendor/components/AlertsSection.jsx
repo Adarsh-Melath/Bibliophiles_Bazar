@@ -50,7 +50,7 @@ export default function AlertsSection() {
             ))}
           </ul>
 
-          <button
+          {/* <button
             onClick={() => navigate('/vendor/books')}
             className="text-[10px] font-ui font-bold uppercase tracking-widest text-red-600 hover:text-shelf transition-all flex items-center gap-2 group"
           >
@@ -58,7 +58,7 @@ export default function AlertsSection() {
             <div className="w-6 h-6 rounded-full border border-red-100 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all">
                 <ArrowRight className="w-3 h-3 translate-x-px" />
             </div>
-          </button>
+          </button> */}
         </div>
       </div>
     </motion.div>

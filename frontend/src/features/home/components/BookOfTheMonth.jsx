@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useMemo, memo } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Star, ShoppingCart, BookOpen } from 'lucide-react';
 import { books } from '../data/books';
 
-export function BookOfTheMonth() {
+function BookOfTheMonthComponent() {
   const containerRef = useRef(null);
 
   const isInView = useInView(containerRef, {
@@ -11,13 +11,13 @@ export function BookOfTheMonth() {
     margin: '-100px'
   });
 
-  const book = books[4]; // Project Hail Mary
+  const book = useMemo(() => books[4], []); // Project Hail Mary
 
   // 3D Tilt Effect State
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
@@ -27,45 +27,48 @@ export function BookOfTheMonth() {
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateXValue = ((y - centerY) / centerY) * -10;
-    const rotateYValue = ((x - centerX) / centerX) * 10;
+    const rotateXValue = ((y - centerY) / centerY) * -15;
+    const rotateYValue = ((x - centerX) / centerX) * 15;
 
     setRotateX(rotateXValue);
     setRotateY(rotateYValue);
-  };
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setRotateX(0);
     setRotateY(0);
-  };
+  }, []);
 
   return (
-    <section className="py-32 bg-paper relative overflow-hidden">
-      {/* Decorative Arch */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-shelf/[0.02] rounded-l-full transform translate-x-1/4" />
+    <section className="py-40 bg-paper relative overflow-hidden font-ui">
+      {/* Decorative Editorial Element */}
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gold/[0.02] transform translate-x-1/4 -skew-x-12" />
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
+      <div className="section-container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-20"
+          transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+          className="text-center mb-24"
         >
-            <span className="font-ui text-[10px] uppercase font-bold tracking-[0.4em] text-burgundy mb-4 block">Current Selection</span>
-          <h2 className="font-heading text-5xl md:text-6xl font-bold text-shelf mb-6">
-            Specimen of the Month
+          <motion.div className="inline-flex items-center gap-4 px-1 mb-8">
+            <div className="h-[1px] w-8 bg-gold" />
+            <span className="text-[10px] uppercase font-bold tracking-[0.5em] text-gold">The Monthly Specimen</span>
+            <div className="h-[1px] w-8 bg-gold" />
+          </motion.div>
+          <h2 className="text-6xl md:text-8xl font-bold text-ink mb-6 tracking-tighter">
+            Featured <span className="italic font-heading">Selection</span>
           </h2>
-          <div className="w-20 h-0.5 bg-burgundy/30 mx-auto" />
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-20 items-center max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-32 items-center max-w-7xl mx-auto">
           {/* 3D Book Presentation */}
           <motion.div
             ref={containerRef}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="relative perspective-1000 w-full max-w-md mx-auto aspect-[2/4] lg:aspect-[3/4.5]"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+            transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+            className="relative perspective-2000 w-full max-w-lg mx-auto"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
@@ -73,10 +76,10 @@ export function BookOfTheMonth() {
               animate={{ rotateX, rotateY }}
               transition={{
                 type: 'spring',
-                stiffness: 250,
-                damping: 25
+                stiffness: 150,
+                damping: 20
               }}
-              className="w-full h-full relative transform-style-3d shadow-shelf rounded-r-lg rounded-l-sm overflow-hidden"
+              className="w-full aspect-[3/4.5] relative transform-style-3d shadow-[50px_50px_100px_rgba(28,28,28,0.15)] rounded-r-xl rounded-l-md overflow-hidden border-l-[10px] border-white/20"
             >
               <img
                 src={book.coverUrl}
@@ -84,89 +87,89 @@ export function BookOfTheMonth() {
                 className="w-full h-full object-cover"
               />
 
-              {/* Enhanced Book Spine Component */}
-              <div className="absolute inset-y-0 left-0 w-5 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
-              <div className="absolute inset-y-0 left-0 w-[2px] bg-white/10" />
-
-              {/* Archival Glare Effect */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none" />
+              {/* Enhanced Spine & Glare */}
+              <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
+              <div className="absolute inset-y-0 left-0 w-[1px] bg-white/20" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 pointer-events-none" />
             </motion.div>
 
             {/* Natural Casting Shadow */}
-            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[90%] h-12 bg-shelf/20 blur-2xl rounded-[100%] z-0" />
+            <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[110%] h-20 bg-ink/10 blur-[80px] rounded-[100%] z-0" />
           </motion.div>
 
-          {/* Archival Details Panel */}
+          {/* Editorial Details Panel */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="space-y-8"
+            initial={{ opacity: 0, x: 40 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.19, 1, 0.22, 1] }}
+            className="space-y-12"
           >
-            <div className="space-y-4">
-              <div className="inline-block px-3 py-1 border border-burgundy/20 bg-burgundy/5 rounded-sm">
-                <p className="font-ui text-[10px] text-burgundy font-bold uppercase tracking-widest leading-none">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-3 px-4 py-1 border border-gold/20 bg-gold/5 rounded-full">
+                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
+                <p className="text-[10px] text-gold font-bold uppercase tracking-[0.2em]">
                     {book.category}
                 </p>
               </div>
 
-              <h3 className="font-heading text-5xl md:text-6xl font-bold text-shelf leading-[1.1] tracking-tight">
+              <h3 className="text-6xl md:text-8xl font-bold text-ink leading-[0.9] tracking-tighter">
                 {book.title}
               </h3>
 
-              <p className="font-body text-2xl text-shelf/40 italic font-medium">
-                authored by {book.author}
+              <p className="font-heading text-2xl text-ink/30 italic">
+                A work by {book.author}
               </p>
             </div>
 
-            <div className="flex items-center gap-4 border-y border-shelf/5 py-6">
-              <div className="flex text-burgundy/80">
+            <div className="flex items-center gap-6 border-y border-ink/5 py-8">
+              <div className="flex text-gold">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     size={16}
                     fill={i < Math.floor(book.rating) ? 'currentColor' : 'none'}
-                    className="mr-0.5"
+                    className="mr-1"
                   />
                 ))}
               </div>
 
-              <span className="font-ui font-bold text-[11px] uppercase tracking-widest text-shelf/60">
-                Critical Rating: {book.rating} / 5.0
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink/20 border-l border-ink/10 pl-6">
+                ARCHIVAL RATING: {book.rating}
               </span>
             </div>
 
-            <p className="font-body text-shelf/60 leading-[1.8] text-lg lg:text-xl font-medium max-w-lg">
+            <p className="font-body text-ink/50 leading-[2] text-lg lg:text-xl max-w-xl">
               {book.description}
             </p>
 
-            <div className="flex items-baseline gap-3">
-              <span className="font-ui text-[10px] uppercase font-bold text-shelf/30 self-center">Investment</span>
-              <div className="font-heading text-4xl font-bold text-shelf">
+            <div className="flex items-center gap-6">
+              <div className="text-5xl font-bold text-ink">
                 {new Intl.NumberFormat('en-IN', {
                     style: 'currency',
                     currency: 'INR',
                     maximumFractionDigits: 0
                 }).format(book.price)}
               </div>
+              <div className="h-10 w-[1px] bg-ink/10" />
+              <span className="text-[10px] uppercase font-bold tracking-[0.4em] text-ink/20">Initial Offering</span>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-5 pt-8">
+            <div className="flex flex-col sm:flex-row gap-6 pt-10">
               <motion.button
-                whileHover={{ y: -4, backgroundColor: 'var(--burgundy)' }}
+                whileHover={{ y: -5, backgroundColor: '#d4af37', color: '#fff' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-3 bg-shelf text-paper font-ui font-bold uppercase tracking-[0.2em] text-[11px] py-5 px-10 rounded-sm transition-all duration-300 shadow-shelf"
+                className="flex-1 flex items-center justify-center gap-4 bg-ink text-white font-ui font-bold uppercase tracking-[0.3em] text-[11px] py-6 px-12 rounded-full transition-all duration-700 shadow-2xl shadow-ink/10 group"
               >
-                <ShoppingCart size={16} />
-                Acquire Specimen
+                <ShoppingCart size={18} className="group-hover:scale-110 transition-transform" />
+                Acquire Work
               </motion.button>
 
               <motion.button
-                whileHover={{ y: -4, borderColor: 'var(--shelf)' }}
+                whileHover={{ y: -5, borderColor: '#1c1c1c', color: '#1c1c1c' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-3 border border-shelf/15 text-shelf font-ui font-bold uppercase tracking-[0.2em] text-[11px] py-5 px-10 rounded-sm transition-all duration-300"
+                className="flex-1 flex items-center justify-center gap-4 border-2 border-ink/10 text-ink/40 font-ui font-bold uppercase tracking-[0.3em] text-[11px] py-6 px-12 rounded-full transition-all duration-700 group"
               >
-                <BookOpen size={16} />
+                <BookOpen size={18} className="group-hover:scale-110 transition-transform" />
                 Examine Preview
               </motion.button>
             </div>
@@ -176,3 +179,5 @@ export function BookOfTheMonth() {
     </section>
   );
 }
+
+export const BookOfTheMonth = memo(BookOfTheMonthComponent);

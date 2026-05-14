@@ -11,30 +11,23 @@ const menuItems = [
     { id: 'security', label: 'Security', icon: Shield, path: '/profile/security' },
 ]
 
-export default function ProfileSidebar({ activeSection, onSectionChange }) {
+export default function ProfileSidebar({ activeSection }) {
     const navigate = useNavigate();
     
     const handleNavigation = (item) => {
         if (item.path) {
             navigate(item.path);
         }
-        if (onSectionChange) {
-            onSectionChange(item.id);
-        }
     };
 
     return (
         <div className="w-full">
             {/* Desktop Sidebar */}
-            <div className="hidden lg:flex flex-col gap-4 sticky top-40">
-                <div className="px-5 mb-2">
-                    <h3 className="font-heading font-bold text-2xl text-shelf">
-                        Dashboard
-                    </h3>
-                    <div className="h-0.5 w-8 bg-burgundy mt-2"></div>
-                </div>
-
-                <nav className="flex flex-col gap-1.5">
+            <div className="hidden lg:flex flex-col gap-6 sticky top-40">
+                <nav className="flex flex-col gap-2">
+                    <div className="px-6 mb-4">
+                        <span className="text-[10px] uppercase font-bold tracking-[0.5em] text-ink/20">Archive Registry</span>
+                    </div>
                     {menuItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = activeSection === item.id;
@@ -42,27 +35,36 @@ export default function ProfileSidebar({ activeSection, onSectionChange }) {
                             <button
                                 key={item.id}
                                 onClick={() => handleNavigation(item)}
-                                className={`relative flex items-center gap-4 px-5 py-4 rounded transition-all duration-300 text-left group ${
+                                className={`relative flex items-center gap-5 px-6 py-5 rounded-full transition-all duration-700 text-left group overflow-hidden ${
                                     isActive 
-                                    ? 'text-paper font-bold' 
-                                    : 'text-shelf/60 hover:text-shelf hover:bg-shelf/5'
+                                    ? 'text-white shadow-2xl shadow-ink/20' 
+                                    : 'text-ink/40 hover:text-ink hover:bg-ink/[0.02]'
                                 }`}
                             >
                                 {isActive && (
                                     <motion.div
                                         layoutId="activeSidebarBg"
-                                        className="absolute inset-0 bg-shelf rounded-sm z-0 shadow-lg"
+                                        className="absolute inset-0 bg-ink z-0"
                                         initial={false}
                                         transition={{
                                             type: 'spring',
-                                            stiffness: 350,
-                                            damping: 35
+                                            stiffness: 400,
+                                            damping: 40
                                         }}
                                     />
                                 )}
-                                <span className="relative z-10 flex items-center gap-4">
-                                    <Icon size={18} className={isActive ? 'text-burgundy' : 'group-hover:text-burgundy transition-colors'} />
-                                    <span className="font-ui text-xs uppercase tracking-widest">{item.label}</span>
+                                <span className="relative z-10 flex items-center justify-between w-full">
+                                    <span className="flex items-center gap-5">
+                                        <Icon size={18} className={isActive ? 'text-gold' : 'text-ink/20 group-hover:text-gold transition-colors duration-500'} />
+                                        <span className="font-ui text-[10px] font-bold uppercase tracking-[0.3em]">{item.label}</span>
+                                    </span>
+                                    {isActive && (
+                                        <motion.div 
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_10px_#d4af37]"
+                                        />
+                                    )}
                                 </span>
                             </button>
                         );
@@ -71,8 +73,8 @@ export default function ProfileSidebar({ activeSection, onSectionChange }) {
             </div>
 
             {/* Mobile/Tablet Horizontal Tabs */}
-            <div className="lg:hidden mb-10 overflow-x-auto pb-4 -mx-6 px-6 scrollbar-hide">
-                <div className="flex gap-3 min-w-max">
+            <div className="lg:hidden mb-12 overflow-x-auto pb-6 -mx-6 px-6 scrollbar-hide">
+                <div className="flex gap-4 min-w-max">
                     {menuItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = activeSection === item.id;
@@ -80,16 +82,14 @@ export default function ProfileSidebar({ activeSection, onSectionChange }) {
                             <button
                                 key={item.id}
                                 onClick={() => handleNavigation(item)}
-                                className={`relative flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 whitespace-nowrap border ${
+                                className={`relative flex items-center gap-3 px-8 py-4 rounded-full transition-all duration-700 whitespace-nowrap ${
                                     isActive 
-                                    ? 'bg-shelf text-paper border-shelf shadow-lg' 
-                                    : 'bg-white text-shelf/60 border-shelf/10 hover:border-burgundy/30'
+                                    ? 'bg-ink text-white shadow-xl shadow-ink/20' 
+                                    : 'bg-white/50 backdrop-blur-md text-ink/40 border border-ink/[0.05] hover:border-gold/30'
                                 }`}
                             >
-                                <span className="flex items-center gap-2">
-                                    <Icon size={14} className={isActive ? 'text-burgundy' : ''} />
-                                    <span className="font-ui text-[10px] uppercase font-bold tracking-widest">{item.label}</span>
-                                </span>
+                                <Icon size={14} className={isActive ? 'text-gold' : ''} />
+                                <span className="font-ui text-[9px] font-bold uppercase tracking-[0.3em]">{item.label}</span>
                             </button>
                         );
                     })}

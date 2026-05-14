@@ -6,8 +6,8 @@ export const useAddresses = () =>
         queryKey: ['addresses'],
         queryFn: () =>
             api.get('/user/addresses').then((r) => {
-                console.log("data from useAddresses")
-                console.log(r.data);
+                // console.log("data from useAddresses")
+                // console.log(r.data);
                 return r.data;
             }),
     });

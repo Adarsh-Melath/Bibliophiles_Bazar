@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, memo } from 'react';
 import { motion, useInView } from 'framer-motion';
 import {
   Book,
@@ -54,7 +54,7 @@ const categories = [
   }
 ];
 
-export function CategorySlider() {
+function CategorySliderComponent() {
   const containerRef = useRef(null);
 
   const isInView = useInView(containerRef, {
@@ -63,24 +63,26 @@ export function CategorySlider() {
   });
 
   return (
-    <section className="py-24 bg-paper" ref={containerRef}>
-      <div className="container mx-auto px-6 md:px-12">
+    <section className="py-32 bg-paper font-ui" ref={containerRef}>
+      <div className="section-container">
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-          transition={{ duration: 0.8 }}
-          className="mb-12 border-l-4 border-burgundy pl-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+          className="mb-20 text-center"
         >
-          <h2 className="font-heading text-4xl font-bold text-shelf mb-3 tracking-tight">
-            Curated Archives
+          <motion.div className="inline-flex items-center gap-4 px-1 mb-6">
+            <div className="h-[1px] w-8 bg-gold" />
+            <span className="text-[10px] uppercase font-bold tracking-[0.5em] text-gold">Browse Archives</span>
+            <div className="h-[1px] w-8 bg-gold" />
+          </motion.div>
+          <h2 className="text-5xl md:text-6xl font-bold text-ink tracking-tighter">
+            Curated <span className="italic font-heading">Departments</span>
           </h2>
-          <p className="font-body text-shelf/50 uppercase text-[10px] font-bold tracking-[0.2em]">
-            Browse our hand-picked literary categories
-          </p>
         </motion.div>
 
         <div
-          className="flex gap-8 overflow-x-auto pb-12 cursor-grab active:cursor-grabbing hide-scrollbar"
+          className="flex gap-12 overflow-x-auto pb-16 cursor-grab active:cursor-grabbing hide-scrollbar"
           style={{ scrollbarWidth: 'none' }}
         >
           {categories.map((category, index) => {
@@ -89,23 +91,23 @@ export function CategorySlider() {
             return (
               <motion.div
                 key={category.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                whileHover={{ y: -8 }}
-                className="min-w-[180px] group"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                transition={{ duration: 0.8, delay: index * 0.05, ease: [0.19, 1, 0.22, 1] }}
+                whileHover={{ y: -10 }}
+                className="min-w-[200px] group"
               >
-                <div className="bg-white border border-shelf/5 rounded-sm p-8 flex flex-col items-center text-center gap-6 shadow-soft group-hover:shadow-shelf group-hover:border-burgundy/20 transition-all duration-500">
-                  <div className="w-16 h-16 rounded-full bg-shelf/5 flex items-center justify-center text-shelf group-hover:bg-shelf group-hover:text-paper transition-all duration-500 shadow-inner">
-                    <Icon size={24} strokeWidth={1.5} />
+                <div className="bg-white border border-ink/[0.03] rounded-sm p-10 flex flex-col items-center text-center gap-8 shadow-xl shadow-ink/[0.02] group-hover:shadow-2xl group-hover:shadow-ink/5 group-hover:border-gold/30 transition-all duration-700">
+                  <div className="w-20 h-20 rounded-full bg-ink/[0.02] border border-ink/[0.05] flex items-center justify-center text-ink/20 group-hover:bg-ink group-hover:text-gold transition-all duration-700 shadow-inner group-hover:shadow-gold/20">
+                    <Icon size={28} strokeWidth={1.5} />
                   </div>
 
                   <div>
-                    <h3 className="font-ui font-bold text-xs uppercase tracking-[0.2em] text-shelf mb-2 lg:group-hover:text-burgundy">
+                    <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-ink group-hover:text-gold transition-colors duration-500 mb-3">
                       {category.name}
                     </h3>
-                    <p className="font-body text-[10px] text-shelf/40 font-bold uppercase tracking-widest">
-                      {category.count} <span className="opacity-50">vols</span>
+                    <p className="text-[9px] text-ink/20 font-bold uppercase tracking-[0.2em]">
+                      {category.count} <span className="text-[8px] opacity-40">Manuscripts</span>
                     </p>
                   </div>
                 </div>
@@ -117,3 +119,5 @@ export function CategorySlider() {
     </section>
   );
 }
+
+export const CategorySlider = memo(CategorySliderComponent);

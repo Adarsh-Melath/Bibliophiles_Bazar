@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import { motion } from 'framer-motion';
 
 const publishers = [
@@ -12,64 +12,57 @@ const publishers = [
   'Scholastic',
 ];
 
-export function PublishersSection() {
-  useEffect(() => {
-    console.log("📜 Publishers Registry component mounted at:", new Date().toLocaleTimeString());
-  }, []);
-
+function PublishersSectionComponent() {
   return (
-    <section className="py-24 bg-paper border-y border-shelf/5 overflow-hidden relative selection:bg-burgundy/10">
+    <section className="py-32 bg-paper border-y border-ink/5 overflow-hidden relative font-ui selection:bg-gold/20">
       
-      {/* Subtle background texture */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(circle, var(--shelf) 1px, transparent 1px)', backgroundSize: '30px 30px' }}>
+      {/* Subtle fine-line texture */}
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none" 
+           style={{ backgroundImage: 'linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
       </div>
 
-      <div className="container mx-auto px-6 mb-16 text-center relative z-10">
+      <div className="section-container mb-20 text-center relative z-10">
         <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-4 px-4 py-1.5 bg-shelf/5 rounded-full mb-6"
+            className="inline-flex items-center gap-6 px-1 mb-8"
         >
-            <span className="w-1.5 h-1.5 rounded-full bg-burgundy animate-pulse" />
-            <p className="font-ui text-[10px] font-bold text-shelf/60 uppercase tracking-[0.4em]">
-              Publishers List
+            <div className="h-[1px] w-8 bg-gold" />
+            <p className="text-[10px] font-bold text-ink/40 uppercase tracking-[0.5em]">
+              The Directory
             </p>
-            <span className="w-1.5 h-1.5 rounded-full bg-burgundy animate-pulse" />
+            <div className="h-[1px] w-8 bg-gold" />
         </motion.div>
-        <h2 className="font-heading text-3xl md:text-5xl font-bold text-shelf tracking-tight">
-            Our <span className="italic text-burgundy">Publishers</span>
+        <h2 className="text-5xl md:text-6xl font-bold text-ink tracking-tight">
+            Partnered <span className="italic text-gold font-heading">Institutions</span>
         </h2>
       </div>
 
       {/* Infinite Marquee Container */}
-      <div className="relative flex overflow-hidden group py-4">
+      <div className="relative flex overflow-hidden group py-10">
         
-        {/* Archival Vignette Gradients */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 md:w-64 bg-gradient-to-r from-paper via-paper/90 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 md:w-64 bg-gradient-to-l from-paper via-paper/90 to-transparent z-10 pointer-events-none" />
+        {/* Editorial Gradients */}
+        <div className="absolute left-0 top-0 bottom-0 w-48 md:w-80 bg-gradient-to-r from-paper via-paper/80 to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-48 md:w-80 bg-gradient-to-l from-paper via-paper/80 to-transparent z-10 pointer-events-none" />
 
-        {/* CSS-Driven Infinite Marquee with Focal Highlight logic */}
-        <div className="library-marquee gap-24 lg:gap-32 py-10 group/marquee">
-          {/* Two copies of the list is the gold standard for infinite marquee at 0 -> -50% */}
+        <div className="library-marquee gap-32 lg:gap-48 py-12 group/marquee">
           {[...publishers, ...publishers].map((publisher, index) => (
             <motion.div
               key={index}
               whileHover={{ 
-                scale: 1.1, 
-                rotate: -1,
-                transition: { duration: 0.3, ease: "easeOut" }
+                scale: 1.05, 
+                transition: { duration: 0.5, ease: [0.19, 1, 0.22, 1] }
               }}
-              className="flex-shrink-0 flex items-center gap-16 cursor-default transition-opacity duration-500
-                         group-hover/marquee:opacity-30 hover:!opacity-100"
+              className="flex-shrink-0 flex items-center gap-24 cursor-default transition-all duration-700
+                         group-hover/marquee:opacity-20 hover:!opacity-100"
             >
-              <span className="text-3xl md:text-5xl font-heading font-bold uppercase tracking-tight 
-                               transition-colors duration-500
-                               text-shelf/15 group-hover/marquee:text-shelf/10 hover:!text-burgundy">
+              <span className="text-4xl md:text-7xl font-bold uppercase tracking-tighter 
+                               transition-all duration-700
+                               text-ink/10 group-hover/marquee:text-ink/5 hover:!text-gold">
                 {publisher}
               </span>
-              <span className="text-shelf/5 font-serif lowercase italic text-xl opacity-40">and</span>
+              <div className="w-3 h-3 rounded-full bg-gold/20" />
             </motion.div>
           ))}
         </div>
@@ -77,3 +70,5 @@ export function PublishersSection() {
     </section>
   );
 }
+
+export const PublishersSection = memo(PublishersSectionComponent);

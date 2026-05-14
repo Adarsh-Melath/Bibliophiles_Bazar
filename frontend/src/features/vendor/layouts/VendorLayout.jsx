@@ -4,7 +4,7 @@ import VendorTopNavbar from '../components/VendorTopNavbar'
 
 export default function VendorLayout() {
   return (
-    <div className="flex h-screen overflow-hidden bg-offwhite">
+    <div className="flex h-screen overflow-hidden bg-paper">
       <VendorSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <VendorTopNavbar />

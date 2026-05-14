@@ -1,6 +1,7 @@
+import { memo } from 'react'
 import { motion, useScroll } from 'framer-motion'
 
-export default function ReadingProgressBar() {
+function ReadingProgressBarComponent() {
   const { scrollYProgress } = useScroll()
 
   return (
@@ -10,3 +11,5 @@ export default function ReadingProgressBar() {
     />
   )
 }
+
+export default memo(ReadingProgressBarComponent)

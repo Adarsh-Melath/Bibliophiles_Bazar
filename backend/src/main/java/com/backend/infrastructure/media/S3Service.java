@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.application.service.StorageService;
-import com.backend.presentation.exception.StorageException;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -36,7 +35,7 @@ public class S3Service implements StorageService {
                             .build(),
                     software.amazon.awssdk.core.sync.RequestBody.fromBytes(file.getBytes()));
         } catch (IOException ex) {
-            throw new StorageException("Failed to upload file to S3", ex);
+            throw new RuntimeException("Failed to upload file to S3", ex);
         }
         return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + key;
     }

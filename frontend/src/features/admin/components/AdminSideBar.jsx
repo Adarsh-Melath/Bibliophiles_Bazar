@@ -19,7 +19,7 @@ const NAV_ITEMS = [
     { label: 'Settings', icon: Settings, to: '/admin/settings' },
 ]
 
-export default function AdminSidebar() {
+export default function AdminSideBar() {
     const { user, clearAuth } = useAuthStore()
     const navigate = useNavigate()
 
@@ -29,38 +29,36 @@ export default function AdminSidebar() {
     }
 
     return (
-        <aside className="w-64 shrink-0 min-h-screen flex flex-col bg-shelf relative z-20 border-r border-shelf shadow-2xl">
-            {/* Archival Texture */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.05] mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/dark-wood.png')]" />
-
+        <aside className="w-72 shrink-0 min-h-screen flex flex-col bg-ink relative z-20 border-r border-white/5 shadow-2xl font-ui">
             {/* Brand Identity */}
-            <div className="px-8 py-10 border-b border-paper/5 relative z-10">
-                <div className="flex items-center gap-4 group cursor-pointer">
-                    <div className="w-10 h-10 bg-burgundy rounded-sm flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                        <Library size={20} className="text-paper" />
+            <div className="px-10 py-12 relative z-10">
+                <div className="flex items-center gap-5 group cursor-pointer">
+                    <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-full flex items-center justify-center transition-all duration-500 group-hover:border-gold group-hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                        <Library size={24} className="text-gold" />
                     </div>
                     <div>
-                        <span className="font-heading text-lg font-bold text-paper block leading-none tracking-tight">
-                            Admin Portal
+                        <span className="font-heading text-xl font-bold text-white block leading-none tracking-tight">
+                            BIBLIOPHILES
                         </span>
-                        <span className="font-ui text-[8px] uppercase tracking-[0.4em] text-burgundy font-bold mt-1 block">
-                            Control Panel
+                        <span className="font-ui text-[8px] uppercase tracking-[0.5em] text-gold font-bold mt-1.5 block">
+                            ADMIN PORTAL
                         </span>
                     </div>
                 </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-4 py-8 flex flex-col gap-2 relative z-10">
+            <nav className="flex-1 px-6 py-4 flex flex-col gap-1 relative z-10">
+                <p className="px-6 mb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-white/20 font-bold">Directory</p>
                 {NAV_ITEMS.map(({ label, icon: Icon, to }) => (
                     <NavLink
                         key={to}
                         to={to}
                         className={({ isActive }) =>
-                            `group flex items-center gap-4 px-6 py-4 rounded-sm text-[10px] uppercase font-bold tracking-[0.25em] transition-all duration-500 relative
+                            `group flex items-center gap-5 px-6 py-4 rounded-full text-[10px] uppercase font-bold tracking-[0.25em] transition-all duration-500 relative
                              ${isActive
-                                ? 'text-paper bg-burgundy shadow-shelf'
-                                : 'text-paper/40 hover:text-paper hover:bg-paper/5'
+                                ? 'text-gold bg-white/5'
+                                : 'text-white/30 hover:text-white hover:bg-white/[0.02]'
                             }`
                         }
                     >
@@ -68,13 +66,13 @@ export default function AdminSidebar() {
                             <>
                                 {isActive && (
                                     <motion.div 
-                                        layoutId="active-indicator"
-                                        className="absolute left-0 w-1 h-6 bg-paper rounded-r-full"
+                                        layoutId="sidebar-active"
+                                        className="absolute left-0 w-1 h-5 bg-gold rounded-r-full"
                                     />
                                 )}
-                                <Icon size={14} className={`${isActive ? 'text-paper' : 'text-paper/20 group-hover:text-burgundy'} transition-colors`} />
+                                <Icon size={16} className={`${isActive ? 'text-gold' : 'text-white/20 group-hover:text-gold'} transition-colors duration-500`} />
                                 <span className="flex-1">{label}</span>
-                                {isActive && <div className="w-1.5 h-1.5 rounded-full bg-paper animate-pulse" />}
+                                {isActive && <div className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_10px_#d4af37]" />}
                             </>
                         )}
                     </NavLink>
@@ -82,33 +80,33 @@ export default function AdminSidebar() {
             </nav>
 
             {/* Admin Profile */}
-            <div className="px-6 py-8 border-t border-paper/10 bg-black/20 relative z-10">
-                <div className="flex items-center gap-4 mb-6 px-2">
-                    <div className="w-10 h-10 rounded-sm bg-paper/5 border border-paper/10 flex items-center
-                                    justify-center text-paper font-heading text-lg font-bold shadow-inner">
+            <div className="px-8 py-10 border-t border-white/5 bg-white/[0.01] relative z-10">
+                <div className="flex items-center gap-5 mb-8 px-2">
+                    <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center
+                                    justify-center text-gold font-heading text-xl font-bold shadow-xl">
                         {user?.name?.charAt(0) || 'A'}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                        <p className="font-heading text-sm font-bold text-paper truncate tracking-tight">
+                        <p className="font-heading text-lg font-bold text-white truncate tracking-tight">
                             {user?.name}
                         </p>
-                        <p className="font-ui text-[8px] uppercase tracking-widest text-burgundy font-bold mt-0.5">
-                            Admin Status
+                        <p className="font-ui text-[9px] uppercase tracking-widest text-gold font-bold mt-1">
+                            System Admin
                         </p>
                     </div>
                 </div>
 
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-sm
-                               text-paper/60 hover:text-paper hover:bg-burgundy
-                               font-ui text-[9px] font-bold uppercase tracking-[0.3em] transition-all duration-500 border border-paper/5 hover:border-burgundy"
+                    className="w-full flex items-center justify-center gap-4 px-6 py-4 rounded-full
+                               text-white/40 hover:text-white hover:bg-white/5
+                               font-ui text-[10px] font-bold uppercase tracking-[0.3em] transition-all duration-500 border border-white/10 hover:border-white/20"
                 >
-                    <LogOut size={14} />
+                    <LogOut size={16} />
                     Logout
                 </button>
             </div>
         </aside>
     )
-}
+}

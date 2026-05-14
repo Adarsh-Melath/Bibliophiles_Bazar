@@ -209,6 +209,7 @@ export default function EditProfileForm() {
                 <p className="text-burgundy text-[10px] font-bold uppercase tracking-widest mt-2">{errors.name.message}</p>
               )}
             </motion.div>
+            
             {/* Phone Number */}
             <motion.div variants={itemVariants} className="space-y-2">
               <label className="block text-[11px] font-bold uppercase tracking-[0.2em] text-shelf/60">

@@ -1,33 +1,38 @@
 package com.backend.domain.model;
 
 import java.time.LocalDateTime;
+import java.time.Clock;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
+public final class RefreshToken {
+    private final Long id;
+    private final String token;
+    private final String email;
+    private final LocalDateTime expiresAt;
 
-@Data
-@Entity
-@Table(name = "refresh_tokens")
-public class RefreshToken {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public RefreshToken(Long id, String token, String email, LocalDateTime expiresAt) {
+        this.id = id;
+        this.token = token;
+        this.email = email;
+        this.expiresAt = expiresAt;
+    }
 
-    @Column(nullable = false, unique = true)
-    private String token;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(nullable = false)
-    private String email;
+    public String getToken() {
+        return token;
+    }
 
-    @Column(nullable = false)
-    private LocalDateTime expiresAt;
+    public String getEmail() {
+        return email;
+    }
 
-    public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiresAt);
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
+    public boolean isExpired(Clock clock) {
+        return LocalDateTime.now(clock).isAfter(expiresAt);
     }
 }

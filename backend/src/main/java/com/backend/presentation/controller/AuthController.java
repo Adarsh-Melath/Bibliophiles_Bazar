@@ -44,7 +44,7 @@ public class AuthController {
     @PostMapping("/resend-otp")
     public ResponseEntity<String> resendOtp(@RequestBody Map<String, String> body) {
         String email = body.get("email");
-        if(email==null || email.isBlank()){
+        if (email == null || email.isBlank()) {
             return ResponseEntity.badRequest().body("Email is required");
         }
         authService.sendOtp(body.get("email"));
@@ -56,7 +56,7 @@ public class AuthController {
 
         AuthResponse authResponse = authService.login(request);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", authResponse.getRefreshToken()).httpOnly(true)
-                .path("/")
+                .path("/api")
                 .maxAge(7 * 24 * 60 * 60).sameSite("Lax")
                 .build();
 
@@ -66,13 +66,17 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Map<String, String>> refresh(
+    public ResponseEntity<AuthResponse> refresh(
             @CookieValue(name = "refreshToken", required = false) String refreshToken) {
-        if (refreshToken == null)
-            return ResponseEntity.status(401).build();
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-        String newAccessToken = authService.refresh(refreshToken);
-        return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        // Call the updated service
+        AuthResponse authResponse = authService.refresh(refreshToken);
+
+        // Return the full AuthResponse (includes accessToken and user)
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/logout")
@@ -82,7 +86,7 @@ public class AuthController {
             authService.logout(refreshToken);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .path("/")
+                .path("/api")
                 .maxAge(0)
                 .sameSite("Lax")
                 .build();

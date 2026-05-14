@@ -3,66 +3,116 @@ package com.backend.domain.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
-
-@Data
-@Entity
-@Table(name = "vendor_application")
 public class VendorApplication {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // Application info
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
     private String businessRegistrationNumber;
 
-    @Column(nullable = false)
     private String website;
 
-    @Column(nullable = false)
-    private String publishingSince; // e.g. "1935" or "2010"
+    private String publishingSince;
 
-    // Business info
-    @Column(nullable = false)
     private String businessName;
 
-    @Column(nullable = false)
-    @Size(max = 5000)
     private String businessDescription; // what they sell
 
-    @Column(nullable = false)
     private String category; // Fiction, Non-Fiction, etc.
 
-    // Status
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ApplicationStatus status = ApplicationStatus.PENDING;
 
     private String rejectionReason; // filled by admin on rejection
 
-    @Column(nullable = false, updatable = false)
     private LocalDateTime appliedAt = LocalDateTime.now();
 
     private LocalDateTime reviewedAt;
+
+    public VendorApplication(Long id, String name, String email, String phone, String businessRegistrationNumber,
+            String website, String publishingSince, String businessName, String businessDescription, String category,
+            ApplicationStatus status, String rejectionReason, LocalDateTime appliedAt, LocalDateTime reviewedAt) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.businessRegistrationNumber = businessRegistrationNumber;
+        this.website = website;
+        this.publishingSince = publishingSince;
+        this.businessName = businessName;
+        this.businessDescription = businessDescription;
+        this.category = category;
+        this.status = status;
+        this.rejectionReason = rejectionReason;
+        this.appliedAt = appliedAt;
+        this.reviewedAt = reviewedAt;
+    }
+
+    public void changeStatus(ApplicationStatus status) {
+        this.status = status;
+        this.reviewedAt = LocalDateTime.now();
+    }
+
+    public void addRejectReason(String reason) {
+        this.rejectionReason = reason;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getBusinessRegistrationNumber() {
+        return businessRegistrationNumber;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public String getPublishingSince() {
+        return publishingSince;
+    }
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public String getBusinessDescription() {
+        return businessDescription;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public ApplicationStatus getStatus() {
+        return status;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public LocalDateTime getAppliedAt() {
+        return appliedAt;
+    }
+
+    public LocalDateTime getReviewedAt() {
+        return reviewedAt;
+    }
 
 }

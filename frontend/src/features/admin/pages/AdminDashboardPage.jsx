@@ -1,327 +1,162 @@
 import { Bell, Search, TrendingUp, TrendingDown, Users, BookOpen, DollarSign, Library, ShoppingCart, Globe } from 'lucide-react'
 import { useAuthStore } from '../../../store/authStore'
-import AdminSidebar from '../components/AdminSideBar'
 import {
     AreaChart, Area, BarChart, Bar,
     XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts'
-import AdminTopBar from '../components/AdminTopBar'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Badge } from '../../../components/ui'
 import { motion } from 'framer-motion'
+import PageTransition from '../../../components/ui/PageTransition'
 
-const STATS = [
-    { label: 'Total Users', value: '3,842', change: '+12%', up: true, icon: Users },
-    { label: 'Total Orders', value: '156', change: '-4%', up: false, icon: ShoppingCart },
-    { label: 'Total Books', value: '1,248', change: '+8', up: true, icon: BookOpen },
-    { label: 'Total Sales', value: '$8,491', change: '+$1.2k', up: true, icon: DollarSign },
+const revenueData = [
+    { name: 'Jan', revenue: 4000, orders: 2400 },
+    { name: 'Feb', revenue: 3000, orders: 1398 },
+    { name: 'Mar', revenue: 2000, orders: 9800 },
+    { name: 'Apr', revenue: 2780, orders: 3908 },
+    { name: 'May', revenue: 1890, orders: 4800 },
+    { name: 'Jun', revenue: 2390, orders: 3800 },
 ]
 
-const REVENUE_DATA = [
-    { month: 'Jan', revenue: 3200 },
-    { month: 'Feb', revenue: 4100 },
-    { month: 'Mar', revenue: 3800 },
-    { month: 'Apr', revenue: 5200 },
-    { month: 'May', revenue: 6800 },
-    { month: 'Jun', revenue: 8491 },
+const stats = [
+    { label: 'Total Revenue', value: '$128,450', icon: DollarSign, trend: '+12.5%', trendUp: true },
+    { label: 'Total Orders', value: '2,345', icon: ShoppingCart, trend: '+8.2%', trendUp: true },
+    { label: 'Active Users', value: '1,890', icon: Users, trend: '-2.1%', trendUp: false },
+    { label: 'Total Books', value: '15,678', icon: BookOpen, trend: '+5.3%', trendUp: true },
 ]
-const ORDER_DATA = [
-    { month: 'Jan', orders: 45 },
-    { month: 'Feb', orders: 52 },
-    { month: 'Mar', orders: 48 },
-    { month: 'Apr', orders: 70 },
-    { month: 'May', orders: 85 },
-    { month: 'Jun', orders: 156 },
-]
-
-const TOP_BOOKS = [
-    { title: 'The Shadow of the Wind', cover: 'https://images.unsplash.com/photo-1543004471-2401f3e1b854?auto=format&fit=crop&q=80&w=200', vendor: 'Heritage Group', sales: 842, rating: 4.9 },
-    { title: 'Midnight Library', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=200', vendor: 'Curator Co.', sales: 756, rating: 4.8 },
-    { title: 'Old Man and the Sea', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=200', vendor: 'Books Inc.', sales: 612, rating: 4.7 },
-]
-
-const VENDOR_ACTIVITY = [
-    { text: 'Admin "A. Vance" added 12 new books to the collection.', time: '12 mins ago' },
-    { text: 'Vendor "The Booksmith" accepted a request for "The Odyssey".', time: '45 mins ago' },
-    { text: 'New vendor application received from "Press Inc".', time: '2 hours ago' },
-]
-
-const RECENT_ORDERS = [
-    { id: '#BB-8491', customer: 'Arthur Dent', book: 'The Hitchhiker\'s Guide', status: 'Delivered', amount: '$42.00' },
-    { id: '#BB-8492', customer: 'Evelyn Carnahan', book: 'Book of the Dead', status: 'Pending', amount: '$150.00' },
-    { id: '#BB-8493', customer: 'Atticus Finch', book: 'To Kill a Mockingbird', status: 'Processing', amount: '$18.50' },
-    { id: '#BB-8494', customer: 'Hercule Poirot', book: 'Murder on the Orient Express', status: 'Cancelled', amount: '$24.90' },
-]
-
-const STATUS_STYLES = {
-    Delivered: { variant: 'success', label: 'Delivered' },
-    Pending: { variant: 'warning', label: 'Pending' },
-    Processing: { variant: 'info', label: 'Processing' },
-    Cancelled: { variant: 'error', label: 'Cancelled' },
-}
 
 export default function AdminDashboardPage() {
     const { user } = useAuthStore()
 
     return (
-        <div className="flex min-h-screen bg-paper font-body text-shelf selection:bg-burgundy/10">
-            <AdminSidebar />
+        <div className="min-h-screen bg-paper font-ui selection:bg-gold/20">
+            <main className="section-container py-16">
+                <div className="mb-16">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="inline-flex items-center gap-4 mb-6"
+                    >
+                        <div className="h-[1px] w-12 bg-gold" />
+                        <span className="text-[10px] uppercase font-bold tracking-[0.5em] text-gold">Executive Overview</span>
+                    </motion.div>
+                    <h1 className="text-6xl md:text-7xl font-bold text-ink tracking-tighter mb-4">
+                        System <span className="italic font-heading">Insights</span>
+                    </h1>
+                    <p className="text-ink/30 text-lg">Welcome back, {user?.name}. Here is the current state of your literary empire.</p>
+                </div>
 
-            <div className="flex-1 flex flex-col min-w-0">
-                <AdminTopBar />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-20">
+                    {stats.map((stat, index) => (
+                        <motion.div
+                            key={stat.label}
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1, ease: [0.19, 1, 0.22, 1], duration: 1 }}
+                            className="editorial-card group"
+                        >
+                            <div className="flex items-start justify-between mb-8">
+                                <div className="w-14 h-14 rounded-full bg-ink/[0.03] border border-ink/[0.05] flex items-center justify-center transition-all duration-700 group-hover:bg-ink group-hover:text-gold group-hover:shadow-2xl group-hover:shadow-ink/20">
+                                    <stat.icon className="h-6 w-6 transition-colors duration-700" />
+                                </div>
+                                <div className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border ${stat.trendUp ? 'border-gold text-gold bg-gold/5' : 'border-velvet/20 text-velvet bg-velvet/5'}`}>
+                                    {stat.trend}
+                                </div>
+                            </div>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-ink/20 mb-2">{stat.label}</p>
+                            <div className="text-4xl font-bold text-ink tracking-tighter">{stat.value}</div>
+                        </motion.div>
+                    ))}
+                </div>
 
-                <main className="flex-1 p-10 overflow-y-auto space-y-10">
-
-                    {/* Header */}
-                    <div className="flex flex-col md:flex-row md:items-end justify-between items-start gap-6 border-b border-shelf/5 pb-10">
-                        <div>
-                            <span className="font-ui text-[10px] uppercase font-bold tracking-[0.4em] text-burgundy mb-3 block">Overview</span>
-                            <h1 className="font-heading text-4xl md:text-5xl font-bold text-shelf tracking-tight">
-                                Welcome, {user?.name?.split(' ')[0]}
-                            </h1>
-                            <p className="font-body text-shelf/40 mt-3 text-base italic max-w-lg leading-relaxed">
-                                Monitor your store activity and sales.
-                            </p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-20">
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4, ease: [0.19, 1, 0.22, 1], duration: 1.2 }}
+                        className="lg:col-span-2 editorial-card !p-12"
+                    >
+                        <div className="mb-12 flex items-end justify-between">
+                            <div>
+                                <h3 className="text-3xl font-bold text-ink tracking-tight">Revenue Dynamics</h3>
+                                <p className="text-[10px] text-ink/30 uppercase tracking-[0.3em] mt-2">Fiscal trajectory analysis</p>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-gold" />
+                                    <span className="text-[9px] font-bold uppercase tracking-widest text-ink/40">Revenue</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div className="h-[400px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={revenueData}>
+                                    <defs>
+                                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#d4af37" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#d4af37" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#1c1c1c" vertical={false} opacity={0.03} />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fill: '#1c1c1c', fontSize: 10, fontWeight: 700, opacity: 0.2 }} 
+                                        dy={15}
+                                    />
+                                    <YAxis 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fill: '#1c1c1c', fontSize: 10, fontWeight: 700, opacity: 0.2 }} 
+                                    />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: '#1c1c1c', border: 'none', borderRadius: '12px', padding: '16px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}
+                                        itemStyle={{ color: '#d4af37', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                                        labelStyle={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.2em' }}
+                                        cursor={{ stroke: '#d4af37', strokeWidth: 1, strokeDasharray: '4 4' }}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="revenue"
+                                        stroke="#d4af37"
+                                        strokeWidth={4}
+                                        fillOpacity={1}
+                                        fill="url(#colorRevenue)"
+                                        animationDuration={2500}
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </motion.div>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {STATS.map((stat, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                            >
-                                <Card variant="elevated" className="h-full">
-                                    <div className="flex items-start justify-between mb-6">
-                                        <div className="w-12 h-12 rounded-sm bg-shelf/5 border border-shelf/5 flex items-center justify-center text-burgundy shadow-inner">
-                                            <stat.icon size={20} />
-                                        </div>
-                                        <div className={`flex items-center gap-1 font-ui text-[10px] font-bold ${stat.up ? 'text-green-800' : 'text-burgundy'}`}>
-                                            {stat.up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                                            {stat.change}
-                                        </div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, ease: [0.19, 1, 0.22, 1], duration: 1.2 }}
+                        className="editorial-card !p-12 bg-ink text-white"
+                    >
+                        <div className="mb-12">
+                            <h3 className="text-3xl font-bold text-white tracking-tight">Recent Archives</h3>
+                            <p className="text-[10px] text-white/20 uppercase tracking-[0.3em] mt-2">Latest system curation</p>
+                        </div>
+                        <div className="space-y-10">
+                            {[1, 2, 3, 4, 5, 6].map((item) => (
+                                <div key={item} className="flex items-center gap-6 group cursor-pointer">
+                                    <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center transition-all duration-500 group-hover:border-gold group-hover:bg-white/5">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
                                     </div>
-                                    <p className="font-ui text-[9px] font-bold text-shelf/30 uppercase tracking-[0.3em] mb-2">{stat.label}</p>
-                                    <p className="font-heading text-3xl font-bold text-shelf tracking-tight">
-                                        {stat.value}
-                                    </p>
-                                </Card>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {/* Charts */}
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                        
-                        {/* Area Chart: Orders */}
-                        <Card className="p-0 overflow-hidden">
-                            <CardHeader className="p-8 border-b border-shelf/5">
-                                <CardTitle>Orders</CardTitle>
-                                <CardDescription>Monthly order activity</CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-8">
-                                <ResponsiveContainer width="100%" height={240}>
-                                    <AreaChart data={ORDER_DATA}>
-                                        <defs>
-                                            <linearGradient id="orderGrad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#800020" stopOpacity={0.15} />
-                                                <stop offset="95%" stopColor="#800020" stopOpacity={0} />
-                                            </linearGradient>
-                                        </defs>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#2C1E11" strokeOpacity={0.03} vertical={false} />
-                                        <XAxis 
-                                            dataKey="month" 
-                                            tick={{ fontSize: 10, fill: '#2C1E11', opacity: 0.3, fontWeight: 'bold' }} 
-                                            axisLine={false} 
-                                            tickLine={false} 
-                                        />
-                                        <YAxis tick={{ fontSize: 10, fill: '#2C1E11', opacity: 0.3 }} axisLine={false} tickLine={false} />
-                                        <Tooltip 
-                                            contentStyle={{ 
-                                                backgroundColor: '#FDFBF7', 
-                                                border: '1px solid rgba(44,30,17,0.1)',
-                                                borderRadius: '2px',
-                                                boxShadow: '0 10px 30px rgba(44,30,17,0.1)'
-                                            }} 
-                                        />
-                                        <Area type="monotone" dataKey="orders" stroke="#800020" strokeWidth={3} fill="url(#orderGrad)" />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            </CardContent>
-                        </Card>
-
-                        {/* Bar Chart: Revenue */}
-                        <Card className="p-0 overflow-hidden">
-                            <CardHeader className="p-8 border-b border-shelf/5">
-                                <CardTitle>Revenue</CardTitle>
-                                <CardDescription>Monthly sales growth</CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-8">
-                                <ResponsiveContainer width="100%" height={240}>
-                                    <BarChart data={REVENUE_DATA}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#2C1E11" strokeOpacity={0.03} vertical={false} />
-                                        <XAxis 
-                                            dataKey="month" 
-                                            tick={{ fontSize: 10, fill: '#2C1E11', opacity: 0.3, fontWeight: 'bold' }} 
-                                            axisLine={false} 
-                                            tickLine={false} 
-                                        />
-                                        <YAxis tick={{ fontSize: 10, fill: '#2C1E11', opacity: 0.3 }} axisLine={false} tickLine={false} />
-                                        <Tooltip 
-                                            cursor={{ fill: 'rgba(44,30,17,0.02)' }}
-                                            contentStyle={{ 
-                                                backgroundColor: '#FDFBF7', 
-                                                border: '1px solid rgba(44,30,17,0.1)',
-                                                borderRadius: '2px'
-                                            }} 
-                                            formatter={(v) => [`$${v}`, 'Revenue']} 
-                                        />
-                                        <Bar dataKey="revenue" fill="#2C1E11" radius={[2, 2, 0, 0]} barSize={40} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Best Sellers & Activity */}
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                        
-                        {/* Top Books Table */}
-                        <Card className="p-0">
-                            <CardHeader className="p-8 border-b border-shelf/5">
-                                <CardTitle>Top Books</CardTitle>
-                                <CardDescription>Best selling books this month</CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-8">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full">
-                                        <thead>
-                                            <tr className="border-b border-shelf/10">
-                                                <th className="text-left pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Book</th>
-                                                <th className="text-right pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Sales</th>
-                                                <th className="text-right pb-4 font-ui text-[9px] uppercase tracking-[0.3em] text-shelf/30">Rating</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-shelf/5">
-                                            {TOP_BOOKS.map((book, i) => (
-                                                <tr key={i} className="group hover:bg-shelf/[0.02] transition-colors">
-                                                    <td className="py-5">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="relative shrink-0">
-                                                                 <img src={book.cover} alt={book.title}
-                                                                    className="w-9 h-12 object-cover rounded-sm shadow-sm group-hover:scale-110 transition-transform duration-500" />
-                                                                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-sm" />
-                                                            </div>
-                                                            <div className="min-w-0">
-                                                                <p className="font-heading text-sm font-bold text-shelf truncate group-hover:text-burgundy transition-colors">
-                                                                    {book.title}
-                                                                </p>
-                                                                <p className="font-ui text-[9px] uppercase tracking-widest text-shelf/30 font-bold">{book.vendor}</p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="py-5 text-right font-heading text-base font-bold text-shelf/60">
-                                                        {book.sales}
-                                                    </td>
-                                                    <td className="py-5 text-right">
-                                                        <Badge variant="info">★ {book.rating}</Badge>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Recent Activity */}
-                        <Card className="p-0">
-                            <CardHeader className="p-8 border-b border-shelf/5">
-                                <CardTitle>Recent Activity</CardTitle>
-                                <CardDescription>Latest system updates</CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-10 space-y-8">
-                                {VENDOR_ACTIVITY.map((item, i) => (
-                                    <div key={i} className="flex items-start gap-6 relative group">
-                                        {i !== VENDOR_ACTIVITY.length - 1 && (
-                                            <div className="absolute left-[13px] top-8 bottom-[-20px] w-px bg-shelf/5" />
-                                        )}
-                                        <div className="w-7 h-7 rounded-sm border border-shelf/10 bg-paper flex items-center justify-center shrink-0 mt-0.5 shadow-sm group-hover:border-burgundy/30 transition-colors">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-burgundy/20 group-hover:bg-burgundy animate-pulse" />
-                                        </div>
-                                        <div className="min-w-0 space-y-1">
-                                            <p className="font-body text-base text-shelf/70 leading-relaxed italic">{item.text}</p>
-                                            <p className="font-ui text-[9px] uppercase tracking-[0.2em] font-bold text-shelf/20">{item.time}</p>
-                                        </div>
+                                    <div className="flex-1 border-b border-white/5 pb-4 group-last:border-none">
+                                        <p className="font-body text-sm font-medium text-white/80 group-hover:text-gold transition-colors duration-500">Order batch #{4582 + item} catalogued</p>
+                                        <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2 font-bold">
+                                            {item * 12} minutes ago
+                                        </p>
                                     </div>
-                                ))}
-                                <div className="pt-4 border-t border-shelf/5">
-                                    <button className="font-ui text-[9px] uppercase font-bold tracking-[0.3em] text-burgundy hover:text-shelf transition-colors">
-                                        View All Activity →
-                                    </button>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Recent Orders */}
-                    <Card className="p-0 overflow-hidden" variant="elevated">
-                        <CardHeader className="p-10 border-b border-shelf/5 bg-paper/50">
-                            <div className="flex items-center justify-between gap-6">
-                                <div>
-                                    <CardTitle className="text-3xl">Recent Orders</CardTitle>
-                                    <CardDescription>Recent customer purchases and status</CardDescription>
-                                </div>
-                                <button className="library-button-secondary py-3 px-6 text-[9px]">
-                                    Clear Logs
-                                </button>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="overflow-x-auto">
-                                <table className="w-full border-collapse">
-                                    <thead>
-                                        <tr className="bg-shelf/5 border-b border-shelf/10">
-                                            {['ID', 'Customer', 'Book', 'Status', 'Total'].map(h => (
-                                                <th key={h} className="text-left px-8 py-4 font-ui text-[9px]
-                                                                       font-bold text-shelf/40 uppercase tracking-[0.3em]">
-                                                    {h}
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-shelf/5">
-                                        {RECENT_ORDERS.map((order, i) => (
-                                            <tr key={i} className="hover:bg-shelf/[0.01] transition-colors group">
-                                                <td className="px-8 py-6 font-ui text-[10px] font-bold text-shelf/30 uppercase tracking-widest">
-                                                    {order.id}
-                                                </td>
-                                                <td className="px-8 py-6">
-                                                    <p className="font-heading text-base font-bold text-shelf">{order.customer}</p>
-                                                </td>
-                                                <td className="px-8 py-6 font-body text-shelf/60 italic">
-                                                    {order.book}
-                                                </td>
-                                                <td className="px-8 py-6">
-                                                    <Badge variant={STATUS_STYLES[order.status]?.variant || 'default'}>
-                                                        {STATUS_STYLES[order.status]?.label || order.status}
-                                                    </Badge>
-                                                </td>
-                                                <td className="px-8 py-6 font-heading text-lg font-bold text-shelf">
-                                                    {order.amount}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                </main>
-            </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                </div>
+            </main>
         </div>
     )
 }

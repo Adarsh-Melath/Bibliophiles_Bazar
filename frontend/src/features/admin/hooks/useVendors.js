@@ -4,7 +4,7 @@ import api from '../../../lib/axios'
 export const useVendorApplications = (status = '') => {
   return useQuery({
     queryKey: ['vendor-applications', status],
-    queryFn: () => {
+    queryFn: async () => {
       const url = status === 'PENDING'
         ? '/vendor/applications/pending'
         : '/vendor/applications'
@@ -17,7 +17,10 @@ export const useApproveVendor = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (id) => api.post(`/vendor/applications/${id}/approve`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vendor-applications'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vendor-applications'] })
+      queryClient.invalidateQueries({ queryKey: ['vendor-application-status'] })
+    },
   })
 }
 
@@ -26,6 +29,9 @@ export const useRejectVendor = () => {
   return useMutation({
     mutationFn: ({ id, reason }) =>
       api.post(`/vendor/applications/${id}/reject`, { reason }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vendor-applications'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vendor-applications'] })
+      queryClient.invalidateQueries({ queryKey: ['vendor-application-status'] })
+    },
   })
 }

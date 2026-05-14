@@ -13,10 +13,10 @@ export default function VendorDashboardPage() {
       <div className="p-8 space-y-8">
         {/* Page header */}
         <div>
-          <h1 className="text-3xl font-heading font-bold text-shelf">
-            Welcome back, {user?.name?.split(' ')[0] || 'Vendor'} 👋
+          <h1 className="text-3xl font-heading font-bold text-ink">
+            Welcome back, {user?.name?.split(' ')[0] || 'Vendor'} 
           </h1>
-          <p className="text-sm font-body text-shelf/60 mt-1">
+          <p className="text-sm font-body text-ink/60 mt-1">
             Here's what's happening with your store today.
           </p>
         </div>

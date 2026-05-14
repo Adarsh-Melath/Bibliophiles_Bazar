@@ -140,7 +140,7 @@ export default function ResetPasswordPage() {
                                             </button>
                                         </div>
                                         {confirm && password === confirm && (
-                                            <p className="text-green-600 text-[10px] font-bold uppercase mt-2 tracking-widest">Match Verified ✓</p>
+                                            <p className="text-green-600 text-[10px] font-bold uppercase mt-2 tracking-widest">Match Verified </p>
                                         )}
                                         {errors.confirmPassword && (
                                             <p className="text-burgundy text-[10px] font-bold uppercase mt-2 tracking-wide">{errors.confirmPassword.message}</p>

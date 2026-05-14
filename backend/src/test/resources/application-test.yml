@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: BibilophilesBazarTest
+
+  datasource:
+    url: jdbc:h2:mem:bibilophilesbazar;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+  mail:
+    host: localhost
+    port: 2525
+    username: test
+    password: test
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test
+            client-secret: test
+            scope: email, profile
+        provider:
+          google:
+            authorization-uri: https://example.invalid/auth
+            token-uri: https://example.invalid/token
+            user-info-uri: https://example.invalid/userinfo
+            user-name-attribute: sub
+
+app:
+  jwt:
+    secret: "01234567890123456789012345678901"
+    expiration: 900000
+    refresh-expiration: 604800000
+    frontend-url: http://localhost:5173
+
+aws:
+  region: us-east-1
+  accessKey: test
+  secret: test
+  s3:
+    bucket: test-bucket
+
+server:
+  port: 0
+
+logging:
+  level:
+    root: WARN
+

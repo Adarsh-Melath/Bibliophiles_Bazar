@@ -1,246 +1,183 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff, Lock, ShieldCheck, AlertTriangle, Loader } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query'
-import api from '../../../lib/axios'
-import ProfileSidebar from '../components/ProfileSidebar'
-import { changePasswordSchema } from '../schemas/userSchema'
-import { Navbar } from '../../home/components/Navbar'
-import { Footer } from '../../home/components/Footer'
-import { motion } from 'framer-motion'
-import PageTransition from '../../../components/ui/PageTransition'
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import ProfileSidebar from '../components/ProfileSidebar';
+import { changePasswordSchema } from '../schemas/userSchema';
+import { useChangePassword } from '../hooks/useChangePassword';
+import { useAuthStore } from '../../../store/authStore';
+import PageTransition from '../../../components/ui/PageTransition';
+import { AlertCircle, CheckCircle, Shield, Key, Lock } from 'lucide-react';
 
 export default function SecurityPage() {
-    const [show, setShow] = useState({ current: false, new: false, confirm: false })
-    const [success, setSuccess] = useState(false)
+  const [activeTab, setActiveTab] = useState('password');
+  const { user } = useAuthStore();
+  const { mutate: changePassword, isPending, isError, isSuccess } = useChangePassword();
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({
-        resolver: zodResolver(changePasswordSchema),
-    })
+  const [formData, setFormData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
 
-    const { mutate: changePassword, isPending, error } = useMutation({
-        mutationFn: (data) => api.put('/user/change-password', {
-            currentPassword: data.currentPassword,
-            newPassword: data.newPassword,
-        }),
-        onSuccess: () => {
-            setSuccess(true)
-            reset()
-            setTimeout(() => setSuccess(false), 4000)
-        },
-    })
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.newPassword !== formData.confirmPassword) {
+      alert('New passwords do not match');
+      return;
+    }
+    changePassword({
+      email: user.email,
+      currentPassword: formData.currentPassword,
+      newPassword: formData.newPassword
+    });
+  };
 
-    const toggle = (field) => setShow(s => ({ ...s, [field]: !s[field] }))
+  return (
+    <div className="min-h-screen bg-paper flex flex-col font-body selection:bg-burgundy/10">
+      {/* PageTransition commented for performance */}
+      {/* <PageTransition> */}
+        <main className="flex-grow container mx-auto px-6 md:px-12 pt-32 pb-20">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
+            <div className="lg:w-80 flex-shrink-0">
+              <ProfileSidebar
+                activeSection="security"
+                onSectionChange={(s) => s !== 'security' && navigate('/profile')}
+              />
+            </div>
 
-    const inputClass = `w-full pl-11 pr-11 py-4 bg-transparent border-b border-shelf/10
-                        font-body text-base text-shelf placeholder:text-shelf/20
-                        focus:outline-none focus:border-burgundy
-                        transition-all duration-300`
+            <div className="flex-grow min-w-0">
+              <div className="mb-10">
+                <h1 className="font-heading text-4xl font-bold text-shelf tracking-tight">Security</h1>
+                <p className="font-ui text-[10px] font-bold text-shelf/40 uppercase tracking-widest mt-2">Manage your account security</p>
+              </div>
 
-    return (
-        <div className="min-h-screen bg-paper font-body text-shelf selection:bg-burgundy/10">
-            <Navbar />
+              <div className="flex gap-4 mb-8 border-b border-shelf/10">
+                {['password', 'two-factor', 'sessions'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`pb-4 px-4 font-bold uppercase tracking-widest text-[10px] transition-colors ${
+                      activeTab === tab
+                        ? 'text-burgundy border-b-2 border-burgundy'
+                        : 'text-shelf/40 hover:text-shelf'
+                    }`}
+                  >
+                    {tab.replace('-', ' ')}
+                  </button>
+                ))}
+              </div>
 
-            <PageTransition>
-                <main className="max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col lg:flex-row gap-12">
-                    <ProfileSidebar />
-
-                    <div className="flex-1 min-w-0 max-w-3xl flex flex-col gap-10">
-
-                        {/* Archival Header */}
-                        <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="border-b border-shelf/5 pb-10"
-                        >
-                            <span className="font-ui text-[10px] uppercase font-bold tracking-[0.4em] text-burgundy mb-4 block">Security</span>
-                            <h1 className="font-heading text-4xl md:text-5xl font-bold text-shelf tracking-tight">
-                                Security Settings
-                            </h1>
-                            <p className="font-body text-shelf/40 mt-3 text-base italic max-w-lg">
-                                Manage your login details and protect your account.
-                            </p>
-                        </motion.div>
-
-                        {/* Change Password Section */}
-                        <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="library-panel p-10"
-                        >
-                            <div className="flex items-center gap-4 mb-10 pb-6 border-b border-shelf/5">
-                                <div className="w-12 h-12 rounded-sm bg-shelf/5
-                                                flex items-center justify-center border border-shelf/5 shadow-inner">
-                                    <Lock size={20} className="text-burgundy" />
-                                </div>
-                                <div>
-                                    <h2 className="font-heading text-2xl font-bold text-shelf tracking-tight">
-                                        Change Password
-                                    </h2>
-                                    <p className="font-ui text-[10px] uppercase font-bold tracking-[0.2em] text-shelf/30 mt-1">
-                                        Enter a new password below
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Notifications */}
-                            {success && (
-                                <motion.div 
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    className="bg-burgundy/5 border-l-4 border-burgundy text-burgundy
-                                                text-xs font-bold uppercase tracking-widest px-6 py-4 mb-8 flex items-center gap-3 shadow-soft"
-                                >
-                                    <ShieldCheck size={18} />
-                                    Password updated successfully
-                                </motion.div>
-                            )}
-
-                            {error && (
-                                <div className="bg-shelf/5 border-l-4 border-shelf/20 text-shelf/60
-                                                text-xs font-bold uppercase tracking-widest px-6 py-4 mb-8">
-                                    {error.response?.data?.error || 'Update failed'}
-                                </div>
-                            )}
-
-                            <form onSubmit={handleSubmit(d => changePassword(d))} className="space-y-10">
-
-                                {/* Current Password */}
-                                <div className="space-y-3">
-                                    <label className="font-ui text-[10px] font-bold text-shelf/40 uppercase tracking-[0.25em] block">
-                                        Current Password
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            {...register('currentPassword')}
-                                            type={show.current ? 'text' : 'password'}
-                                            placeholder="Your current password"
-                                            className={inputClass}
-                                        />
-                                        <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-shelf/10" />
-                                        <button type="button" onClick={() => toggle('current')}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-shelf/20 hover:text-burgundy transition-colors">
-                                            {show.current ? <EyeOff size={18} /> : <Eye size={18} />}
-                                        </button>
-                                    </div>
-                                    {errors.currentPassword && (
-                                        <p className="font-ui text-[9px] font-bold text-burgundy uppercase tracking-wider mt-2">{errors.currentPassword.message}</p>
-                                    )}
-                                </div>
-
-                                {/* New Passwords Grid */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                    <div className="space-y-3">
-                                        <label className="font-ui text-[10px] font-bold text-shelf/40 uppercase tracking-[0.25em] block">
-                                            New Password
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                {...register('newPassword')}
-                                                type={show.new ? 'text' : 'password'}
-                                                placeholder="Min 8 characters"
-                                                className={inputClass}
-                                            />
-                                            <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-shelf/10" />
-                                            <button type="button" onClick={() => toggle('new')}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-shelf/20 hover:text-burgundy transition-colors">
-                                                {show.new ? <EyeOff size={18} /> : <Eye size={18} />}
-                                            </button>
-                                        </div>
-                                        {errors.newPassword && (
-                                            <p className="font-ui text-[9px] font-bold text-burgundy uppercase tracking-wider mt-2">{errors.newPassword.message}</p>
-                                        )}
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <label className="font-ui text-[10px] font-bold text-shelf/40 uppercase tracking-[0.25em] block">
-                                            Confirm Password
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                {...register('confirmPassword')}
-                                                type={show.confirm ? 'text' : 'password'}
-                                                placeholder="Repeat password"
-                                                className={inputClass}
-                                            />
-                                            <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-shelf/10" />
-                                            <button type="button" onClick={() => toggle('confirm')}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-shelf/20 hover:text-burgundy transition-colors">
-                                                {show.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
-                                            </button>
-                                        </div>
-                                        {errors.confirmPassword && (
-                                            <p className="font-ui text-[9px] font-bold text-burgundy uppercase tracking-wider mt-2">{errors.confirmPassword.message}</p>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="pt-6">
-                                    <button type="submit" disabled={isPending}
-                                        className="bg-shelf text-paper font-ui text-[10px] font-bold uppercase tracking-[0.3em] px-12 py-5 rounded-sm shadow-shelf hover:bg-burgundy transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3">
-                                        {isPending
-                                            ? <><Loader size={16} className="animate-spin" /> Saving...</>
-                                            : 'Save Changes'
-                                        }
-                                    </button>
-                                </div>
-
-                            </form>
-                        </motion.div>
-
-                        {/* Danger Zone - Archival Restricted Area */}
-                        <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="bg-paper border border-burgundy/10 p-10 rounded-sm relative overflow-hidden"
-                        >
-                            {/* Decorative background for danger area */}
-                            <div className="absolute top-0 right-0 p-4 opacity-[0.03]">
-                                <AlertTriangle size={120} className="text-burgundy" />
-                            </div>
-
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="w-12 h-12 rounded-sm bg-burgundy/5
-                                                flex items-center justify-center border border-burgundy/10">
-                                    <AlertTriangle size={20} className="text-burgundy" />
-                                </div>
-                                <div>
-                                    <h2 className="font-heading text-2xl font-bold text-shelf tracking-tight">
-                                        Danger Zone
-                                    </h2>
-                                    <p className="font-ui text-[10px] uppercase font-bold tracking-[0.2em] text-shelf/30 mt-1">
-                                        Caution: This cannot be undone
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row items-center justify-between p-8 rounded-sm
-                                            bg-burgundy/[0.02] border border-burgundy/5 gap-6">
-                                <div className="text-center sm:text-left">
-                                    <p className="font-heading text-xl font-bold text-shelf">
-                                        Delete Account
-                                    </p>
-                                    <p className="font-body text-shelf/40 text-sm mt-1 italic">
-                                        Permanently delete your account and all your data.
-                                    </p>
-                                </div>
-                                <button className="px-8 py-3 border-2 border-burgundy/20
-                                                   text-burgundy font-ui text-[10px] font-bold uppercase tracking-[0.25em]
-                                                   hover:bg-burgundy hover:text-paper
-                                                   transition-all duration-300 rounded-sm shadow-soft">
-                                    Delete My Account
-                                </button>
-                            </div>
-                        </motion.div>
-
+              {activeTab === 'password' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="max-w-md"
+                >
+                  <div className="bg-shelf/5 border border-shelf/10 rounded-sm p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-burgundy rounded-sm flex items-center justify-center">
+                        <Key size={20} className="text-paper" />
+                      </div>
+                      <div>
+                        <h3 className="font-heading text-lg font-bold text-paper">Change Password</h3>
+                        <p className="font-ui text-[10px] text-shelf/40 uppercase tracking-widest">Update your account password</p>
+                      </div>
                     </div>
-                </main>
-            </PageTransition>
 
-            <Footer />
-        </div>
-    )
+                    {isSuccess && (
+                      <div className="mb-6 p-4 bg-green/10 border border-green/20 rounded-sm flex items-center gap-3">
+                        <CheckCircle size={20} className="text-green" />
+                        <span className="font-body text-sm text-green">Password changed successfully</span>
+                      </div>
+                    )}
+
+                    {isError && (
+                      <div className="mb-6 p-4 bg-red/10 border border-red/20 rounded-sm flex items-center gap-3">
+                        <AlertCircle size={20} className="text-red" />
+                        <span className="font-body text-sm text-red">Failed to change password</span>
+                      </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div>
+                        <label className="block font-ui text-[10px] uppercase tracking-widest text-shelf/40 mb-2">
+                          Current Password
+                        </label>
+                        <input
+                          type="password"
+                          value={formData.currentPassword}
+                          onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
+                          className="w-full bg-paper border border-shelf/10 rounded-sm px-4 py-3 font-body text-sm text-shelf focus:border-burgundy focus:outline-none transition-colors"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-ui text-[10px] uppercase tracking-widest text-shelf/40 mb-2">
+                          New Password
+                        </label>
+                        <input
+                          type="password"
+                          value={formData.newPassword}
+                          onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                          className="w-full bg-paper border border-shelf/10 rounded-sm px-4 py-3 font-body text-sm text-shelf focus:border-burgundy focus:outline-none transition-colors"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-ui text-[10px] uppercase tracking-widest text-shelf/40 mb-2">
+                          Confirm New Password
+                        </label>
+                        <input
+                          type="password"
+                          value={formData.confirmPassword}
+                          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                          className="w-full bg-paper border border-shelf/10 rounded-sm px-4 py-3 font-body text-sm text-shelf focus:border-burgundy focus:outline-none transition-colors"
+                          required
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isPending}
+                        className="w-full bg-shelf text-paper font-ui font-bold uppercase tracking-[0.2em] text-[11px] px-8 py-4 shadow-shelf hover:bg-burgundy transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isPending ? 'Updating...' : 'Update Password'}
+                      </button>
+                    </form>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'two-factor' && (
+                <div className="max-w-md">
+                  <div className="bg-shelf/5 border border-shelf/10 rounded-sm p-8 text-center">
+                    <Shield size={48} className="text-shelf/20 mx-auto mb-4" />
+                    <h3 className="font-heading text-xl font-bold text-shelf mb-2">Two-Factor Authentication</h3>
+                    <p className="font-body text-shelf/40 mb-6">Add an extra layer of security to your account</p>
+                    <button className="bg-shelf text-paper font-ui font-bold uppercase tracking-[0.2em] text-[11px] px-8 py-4 shadow-shelf hover:bg-burgundy transition-all duration-500">
+                      Enable 2FA
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'sessions' && (
+                <div className="max-w-md">
+                  <div className="bg-shelf/5 border border-shelf/10 rounded-sm p-8 text-center">
+                    <Lock size={48} className="text-shelf/20 mx-auto mb-4" />
+                    <h3 className="font-heading text-xl font-bold text-shelf mb-2">Active Sessions</h3>
+                    <p className="font-body text-shelf/40 mb-6">Manage your active login sessions</p>
+                    <button className="bg-shelf text-paper font-ui font-bold uppercase tracking-[0.2em] text-[11px] px-8 py-4 shadow-shelf hover:bg-burgundy transition-all duration-500">
+                      View All Sessions
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </main>
+      {/* </PageTransition> */}
+    </div>
+  );
 }

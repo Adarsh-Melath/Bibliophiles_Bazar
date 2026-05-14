@@ -1,6 +1,7 @@
 package com.backend.presentation.controller;
 
-import org.springframework.data.domain.Page;
+import java.math.BigDecimal;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.application.dto.BookRequest;
 import com.backend.application.dto.BookResponse;
 import com.backend.application.service.BookService;
+import com.backend.domain.model.ProductSort;
+import com.backend.domain.model.pagination.BookSearchQuery;
+import com.backend.domain.model.pagination.PageResult;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +46,7 @@ public class BookController {
 
     @GetMapping
     @PreAuthorize("hasRole('VENDOR')")
-    public ResponseEntity<Page<BookResponse>> getMyBooks(
+    public ResponseEntity<PageResult<BookResponse>> getMyBooks(
             Authentication auth,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
@@ -69,4 +73,6 @@ public class BookController {
         bookService.deleteBook(getEmail(auth), id);
         return ResponseEntity.ok("Book deleted");
     }
+
+  
 }

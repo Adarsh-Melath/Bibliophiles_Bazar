@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen } from 'lucide-react';
 
@@ -16,7 +16,7 @@ const Linkedin = ({ size = 24, ...props }) => (
   <svg width={size} height={size} {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
 );
 
-export function Footer() {
+function FooterComponent() {
   const socialIcons = [
     Facebook,
     Twitter,
@@ -41,31 +41,33 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-shelf border-t border-shelf-light pt-16 pb-8">
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+    <footer className="bg-ink border-t border-white/5 pt-24 pb-12 font-ui">
+      <div className="section-container">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
 
           {/* Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-burgundy">
-              <BookOpen size={28} />
-              <span className="font-heading font-bold text-2xl tracking-tight text-paper">
-                Bookshelf
+          <div className="space-y-8">
+            <div className="flex items-center gap-4 group cursor-pointer">
+              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-700 group-hover:border-gold">
+                <BookOpen size={20} className="text-gold" />
+              </div>
+              <span className="font-heading font-bold text-2xl tracking-tighter text-white uppercase">
+                BIBLIOPHILES
               </span>
             </div>
 
-            <p className="font-body text-paper/70 text-sm leading-relaxed">
-              Your premium digital library. Discover, read, and immerse yourself
-              in the world's greatest stories.
+            <p className="font-body text-white/40 text-sm leading-relaxed max-w-xs">
+              A curated digital sanctuary for the modern bibliophile. Immersion, 
+              discovery, and the pursuit of timeless literature.
             </p>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-5 pt-4">
               {socialIcons.map((Icon, i) => (
                 <motion.a
                   key={i}
                   href="#"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  className="w-10 h-10 rounded-full bg-paper/5 border border-paper/10 flex items-center justify-center text-paper hover:bg-burgundy hover:border-burgundy transition-all"
+                  whileHover={{ y: -4 }}
+                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-gold hover:border-gold transition-all duration-500"
                 >
                   <Icon size={18} />
                 </motion.a>
@@ -74,15 +76,15 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-heading font-bold text-burgundy text-lg mb-6 tracking-wide">
-              Quick Links
+            <h4 className="font-ui font-bold text-gold text-[10px] uppercase tracking-[0.4em] mb-10">
+              Directory
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {quickLinks.map((link) => (
                 <li key={link}>
                   <a
                     href="#"
-                    className="font-ui text-xs uppercase tracking-widest font-medium text-paper/90 hover:text-burgundy transition-colors"
+                    className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 hover:text-white transition-all duration-500"
                   >
                     {link}
                   </a>
@@ -92,15 +94,15 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-heading font-bold text-burgundy text-lg mb-6 tracking-wide">
-              Support
+            <h4 className="font-ui font-bold text-gold text-[10px] uppercase tracking-[0.4em] mb-10">
+              Assistance
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {supportLinks.map((link) => (
                 <li key={link}>
                   <a
                     href="#"
-                    className="font-ui text-xs uppercase tracking-widest font-medium text-paper/90 hover:text-burgundy transition-colors"
+                    className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 hover:text-white transition-all duration-500"
                   >
                     {link}
                   </a>
@@ -110,28 +112,32 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-heading font-bold text-burgundy text-lg mb-6 tracking-wide">
-              Contact Us
+            <h4 className="font-ui font-bold text-gold text-[10px] uppercase tracking-[0.4em] mb-10">
+              Connect
             </h4>
-            <ul className="space-y-3 font-ui text-xs uppercase tracking-widest font-medium text-paper/80">
-              <li>123 Library Street</li>
-              <li>Bookville, BK 12345</li>
+            <ul className="space-y-5 text-[11px] uppercase tracking-[0.2em] font-bold text-white/30">
+              <li className="flex flex-col gap-1">
+                <span className="text-white/10 text-[8px] tracking-[0.5em]">Location</span>
+                <span className="text-white/60">Mayfair, London, UK</span>
+              </li>
 
-              <li className="pt-2">
+              <li className="flex flex-col gap-1 pt-2">
+                <span className="text-white/10 text-[8px] tracking-[0.5em]">Inquiries</span>
                 <a
-                  href="mailto:hello@bookshelf.com"
-                  className="hover:text-burgundy transition-colors"
+                  href="mailto:hello@bibliophiles.com"
+                  className="text-white/60 hover:text-gold transition-colors"
                 >
-                  hello@bookshelf.com
+                  concierge@bibliophiles.com
                 </a>
               </li>
 
-              <li>
+              <li className="flex flex-col gap-1 pt-2">
+                <span className="text-white/10 text-[8px] tracking-[0.5em]">Hotline</span>
                 <a
                   href="tel:+1234567890"
-                  className="hover:text-burgundy transition-colors"
+                  className="text-white/60 hover:text-gold transition-colors"
                 >
-                  +1 (234) 567-890
+                  +44 (20) 7946 0123
                 </a>
               </li>
             </ul>
@@ -139,18 +145,20 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-paper/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-ui text-xs uppercase tracking-widest text-paper/80">
-            © {new Date().getFullYear()} Bookshelf. All rights reserved.
+        <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row items-center justify-between gap-8">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-white/20 font-bold">
+            © {new Date().getFullYear()} BIBLIOPHILES BAZAR. AN EDITORIAL COLLECTION.
           </p>
 
-          <div className="flex gap-6 font-ui text-xs uppercase tracking-widest text-paper/80">
-            <a href="#" className="hover:text-burgundy">Privacy</a>
-            <a href="#" className="hover:text-burgundy">Terms</a>
-            <a href="#" className="hover:text-burgundy">Cookies</a>
+          <div className="flex gap-10 text-[10px] uppercase tracking-[0.3em] font-bold text-white/20">
+            <a href="#" className="hover:text-gold transition-colors">Privacy</a>
+            <a href="#" className="hover:text-gold transition-colors">Terms</a>
+            <a href="#" className="hover:text-gold transition-colors">Cookies</a>
           </div>
         </div>
       </div>
     </footer>
   );
 }
+
+export const Footer = memo(FooterComponent);
